@@ -1,7 +1,7 @@
 """Build a compact sklearn RF surrogate for Sysbench 5-knob (repo self-containment).
 
 Large checkpoints from the original project may be omitted; this writes a small
-placeholder so ``bbo.tasks.surrogate`` works without the KnobsTuningEA tree.
+placeholder so ``bbo.tasks.surrogate`` works without a full-size ``RF_SYSBENCH_5knob.joblib``.
 
 Usage (from repo root)::
 

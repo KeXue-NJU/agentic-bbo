@@ -1,19 +1,19 @@
 # Surrogate assets
 
-If `joblib.load` fails with **`EOF` / `reading array data`**, the file on disk is **incomplete** (partial copy, or Git LFS not pulled). Replace it with the full file from KnobsTuningEA.
+## Download large `*.joblib` files
 
-Each `*.joblib` is a **serialized sklearn surrogate** (RF, etc.) trained in KnobsTuningEA: it maps normalized knob vectors → predicted metric (throughput or latency). Names indicate workload: **Sysbench/MySQL** (`RF_SYSBENCH_*`, `SYSBENCH_all`), **JOB** (`RF_JOB_*`, `JOB_all`), **PostgreSQL** (`pg_5`, `pg_20`). Matching `knobs_*.json` in this folder defines the search space.
+Large checkpoint files are **not** committed to this repository. **Download** them (same filenames as below) from the shared release folder, then place them under `bbo/tasks/surrogate/assets/`:
 
-Large `*.joblib` checkpoints from KnobsTuningEA are **not** committed. Copy them from:
+[https://drive.google.com/drive/folders/1qalYsF7fuCB6MewOTPvr8DDZzIj7tIRt?usp=sharing](https://drive.google.com/drive/folders/1qalYsF7fuCB6MewOTPvr8DDZzIj7tIRt?usp=sharing)
 
-`KnobsTuningEA/autotune/tuning_benchmark/surrogate/`
+If `joblib.load` fails with **`EOF` / `reading array data`**, the file on disk is **incomplete** (partial download, or Git LFS not pulled for a copy that lives in git). **Re-download** the same file from the link above, or set an env override to a full path (see table below).
 
-into **`bbo/tasks/surrogate/assets/`** using the filenames below (or set the env override).
+Each `*.joblib` is a **serialized sklearn surrogate** (RF, etc.): it maps physical knob feature vectors to a predicted metric (throughput or latency). Names map to workloads: **Sysbench/MySQL** (`RF_SYSBENCH_*`, `SYSBENCH_all`), **JOB** (`RF_JOB_*`, `JOB_all`), **PostgreSQL** (`pg_5`, `pg_20`). The matching `knobs_*.json` files in this folder define the BBO search space.
 
 ## Joblib files ↔ benchmark `task_id`
 
-| Copy this file | `task_id` | Env override (optional) |
-|----------------|-----------|-------------------------|
+| File (from the link above) | `task_id` | Env override (optional) |
+|----------------------------|-----------|-------------------------|
 | `RF_SYSBENCH_5knob.joblib` | `knob_surrogate_sysbench_5` | `AGENTIC_BBO_SYSBENCH5_SURROGATE` |
 | `SYSBENCH_all.joblib` | `knob_surrogate_sysbench_all` | `AGENTIC_BBO_SYSBENCH_ALL_SURROGATE` |
 | `RF_JOB_5knob.joblib` | `knob_surrogate_job_5` | `AGENTIC_BBO_JOB5_SURROGATE` |
@@ -21,11 +21,11 @@ into **`bbo/tasks/surrogate/assets/`** using the filenames below (or set the env
 | `pg_5.joblib` | `knob_surrogate_pg_5` | `AGENTIC_BBO_PG5_SURROGATE` |
 | `pg_20.joblib` | `knob_surrogate_pg_20` | `AGENTIC_BBO_PG20_SURROGATE` |
 
-Sysbench 5 also accepts a tiny placeholder from `python -m bbo.tasks.surrogate.build_placeholder_surrogate` (`sysbench_5knob_surrogate.joblib`).
+For Sysbench-5, you can also use a **tiny** placeholder from `python -m bbo.tasks.surrogate.build_placeholder_surrogate` (`sysbench_5knob_surrogate.joblib`) for quick smoke tests.
 
 ## Bundled knobs JSON
 
-Subset files are under this folder (generated from KnobsTuningEA knob specs). Full list: `bbo/tasks/surrogate/catalog.py` → `default_knobs_json_filename` per benchmark.
+`knobs_*.json` files in this directory define knob bounds and types; the mapping from task id to filename is in `bbo/tasks/surrogate/catalog.py` (`default_knobs_json_filename` per benchmark).
 
 ## Tests / demo
 

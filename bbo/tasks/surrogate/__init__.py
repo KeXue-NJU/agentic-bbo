@@ -6,6 +6,12 @@ from .paths import (
     bundled_knobs_top5_path,
     bundled_surrogate_sysbench5_path,
 )
+from .http_specs import HTTP_SURROGATE_TASK_IDS
+from .http_task import (
+    HttpSurrogateKnobTask,
+    HttpSurrogateKnobTaskConfig,
+    create_http_surrogate_knob_task,
+)
 from .task import (
     SurrogateKnobTask,
     SurrogateKnobTaskConfig,
@@ -13,7 +19,13 @@ from .task import (
     create_sysbench5_surrogate_task,
 )
 
+# Public alias (tests and docs)
+create_surrogate_task = create_surrogate_knob_task
+
 __all__ = [
+    "HTTP_SURROGATE_TASK_IDS",
+    "HttpSurrogateKnobTask",
+    "HttpSurrogateKnobTaskConfig",
     "SURROGATE_BENCHMARKS",
     "SYSBENCH_5_FEATURE_ORDER",
     "SurrogateBenchmarkSpec",
@@ -21,6 +33,8 @@ __all__ = [
     "SurrogateKnobTaskConfig",
     "bundled_knobs_top5_path",
     "bundled_surrogate_sysbench5_path",
+    "create_http_surrogate_knob_task",
     "create_surrogate_knob_task",
+    "create_surrogate_task",
     "create_sysbench5_surrogate_task",
 ]

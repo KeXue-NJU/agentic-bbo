@@ -12,13 +12,13 @@ Generate the small default `sysbench_5knob_surrogate.joblib` next to the bundled
 uv run python -m bbo.tasks.surrogate.build_placeholder_surrogate
 ```
 
-To use a **full** RF checkpoint (e.g. copied from KnobsTuningEA):
+To use a **full** RF checkpoint, **download** `RF_SYSBENCH_5knob.joblib` from the link in `bbo/tasks/surrogate/assets/README.md` and place it in assets.
 
 **Option A — copy into assets (no env var):**
 
 ```text
-cp <KnobsTuningEA>/autotune/tuning_benchmark/surrogate/RF_SYSBENCH_5knob.joblib \
-   <agentic-bbo>/bbo/tasks/surrogate/assets/RF_SYSBENCH_5knob.joblib
+cp /path/where/you/downloaded/RF_SYSBENCH_5knob.joblib \
+   <this-repo>/bbo/tasks/surrogate/assets/RF_SYSBENCH_5knob.joblib
 ```
 
 **Option B — any path:**

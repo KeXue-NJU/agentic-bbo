@@ -8,7 +8,11 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from numpy.typing import NDArray
+
+try:
+    from numpy.typing import NDArray
+except ImportError:  # numpy<1.20 (e.g. Py3.7 surrogate Docker with old sklearn)
+    NDArray = np.ndarray
 
 
 @dataclass(frozen=True)

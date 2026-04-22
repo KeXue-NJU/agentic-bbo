@@ -1,8 +1,9 @@
 """
-Registry of KnobsTuningEA-compatible surrogate benchmarks (tuning_benchmark/surrogate/*.joblib).
+Registry of surrogate benchmarks backed by ``*.joblib`` files under ``bbo/tasks/surrogate/assets/``.
 
-Copy the corresponding ``.joblib`` into ``bbo/tasks/surrogate/assets/`` (see ``paths.py``).
-Knob JSON subsets are generated under ``assets/`` from KnobsTuningEA knob specs.
+Large checkpoints are not in git: download from the URL in ``assets/README.md`` (same filenames
+as in ``SURROGATE_BENCHMARKS`` / ``default_joblib_filename``). ``knobs_*.json`` live in
+``assets/`` and define each benchmark's search space.
 """
 
 from __future__ import annotations

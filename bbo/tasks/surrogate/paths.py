@@ -1,4 +1,4 @@
-"""Resolve bundled surrogate assets (independent of KnobsTuningEA checkout)."""
+"""Resolve bundled surrogate assets (``bbo/tasks/surrogate/assets/``)."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from pathlib import Path
 
 _ASSETS = Path(__file__).resolve().parent / "assets"
 
-# 与 KnobsTuningEA `knobs_num=5` + SYSBENCH_shap.json 迭代顺序一致的前 5 个 knob
+# Top-5 SYSBENCH iteration order; matches `knobs_SYSBENCH_top5.json` in assets.
 SYSBENCH_5_FEATURE_ORDER: tuple[str, ...] = (
     "tmp_table_size",
     "max_heap_table_size",

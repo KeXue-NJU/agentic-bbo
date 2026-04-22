@@ -39,7 +39,14 @@ def run_single_experiment(
     surrogate_path: str | Path | None = None,
     knobs_json_path: str | Path | None = None,
 ) -> dict[str, Any]:
-    task = create_task(task_name, max_evaluations=max_evaluations, seed=seed, noise_std=noise_std)
+    task = create_task(
+        task_name,
+        max_evaluations=max_evaluations,
+        seed=seed,
+        noise_std=noise_std,
+        surrogate_path=surrogate_path,
+        knobs_json_path=knobs_json_path,
+    )
     _require_algorithm_support(task, algorithm_name)
     run_dir = _allocate_run_dir(results_root / task_name / algorithm_name / f"seed_{seed}", resume=resume)
     results_jsonl = run_dir / "trials.jsonl"

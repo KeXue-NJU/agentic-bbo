@@ -10,6 +10,12 @@ from .registry import (
     create_task,
     get_synthetic_problem,
 )
+from .surrogate import (
+    HTTP_SURROGATE_TASK_IDS,
+    create_http_surrogate_knob_task,
+    create_surrogate_knob_task,
+    create_surrogate_task,
+)
 from .scientific import (
     BH_TASK_NAME,
     HEA_COMPONENTS,
@@ -52,6 +58,7 @@ __all__ = [
     "HEA_TASK_NAME",
     "HER_FEATURES",
     "HER_TASK_NAME",
+    "HTTP_SURROGATE_TASK_IDS",
     "MOLECULE_TASK_NAME",
     "MoleculeQEDTask",
     "MoleculeTaskConfig",
@@ -77,7 +84,10 @@ __all__ = [
     "create_hea_task",
     "create_her_task",
     "create_molecule_qed_task",
+    "create_http_surrogate_knob_task",
     "create_oer_task",
+    "create_surrogate_knob_task",
+    "create_surrogate_task",
     "create_task",
     "get_synthetic_problem",
 ]

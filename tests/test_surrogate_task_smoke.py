@@ -19,9 +19,9 @@ def test_sysbench5_surrogate_evaluate() -> None:
     p = bundled_surrogate_sysbench5_path()
     if not p.is_file():
         pytest.skip(
-            "No surrogate .joblib found. Copy RF_SYSBENCH_5knob.joblib into "
-            "bbo/tasks/surrogate/assets/ or set AGENTIC_BBO_SYSBENCH5_SURROGATE. "
-            "See bbo/tasks/surrogate/assets/README.md"
+            "No surrogate .joblib found. Download RF_SYSBENCH_5knob.joblib "
+            "(see bbo/tasks/surrogate/assets/README.md) into bbo/tasks/surrogate/assets/, "
+            "or set AGENTIC_BBO_SYSBENCH5_SURROGATE."
         )
 
     task = create_surrogate_task("knob_surrogate_sysbench_5", max_evaluations=3, seed=0)

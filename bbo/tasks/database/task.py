@@ -22,7 +22,7 @@ from ...core import (
     TrialStatus,
     TrialSuggestion,
 )
-from .http_client import get_json, post_json
+from ..http_json import get_json, post_json
 from .knob_encode import build_knob_space, feature_order_by_rank, physical_to_mariadb_strings
 from .specs import (
     HTTP_DATABASE_TASK_IDS,
