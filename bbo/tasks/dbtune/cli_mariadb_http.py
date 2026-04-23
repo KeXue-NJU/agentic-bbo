@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Any
 
 from ...core import Task
-from .specs import HTTP_DATABASE_TASK_IDS, is_database_task_id
-from .task import create_http_database_task
+from .http_mariadb_specs import HTTP_DATABASE_TASK_IDS, is_database_task_id
+from .http_mariadb_task import create_http_database_task
 
 DATABASE_TASK_FAMILY = "database"
 DATABASE_TASK_NAMES: frozenset[str] = frozenset(HTTP_DATABASE_TASK_IDS)

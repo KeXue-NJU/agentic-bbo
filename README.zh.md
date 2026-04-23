@@ -64,13 +64,11 @@
 
 ### `bbo/tasks/`
 
-任务实现同样按家族组织。
-当前家族为：
+任务按家族组织；详情可参见 `bbo/tasks/dbtune/README.md` 等包内说明。
 
-- `bbo/tasks/synthetic/`
-  - `branin.py`
-  - `sphere.py`
-  - `base.py`
+- `bbo/tasks/synthetic/`：合成玩具目标（`branin.py`、`sphere.py`、`base.py`）
+- `bbo/tasks/scientific/`：表格 / 科学计算类 BO 教程任务（`registry.py`、各任务模块、`data/` 资源）
+- `bbo/tasks/dbtune/`：数据库 knob 调优（离线 sklearn surrogate、HTTP MariaDB/sysbench、可选 HTTP surrogate；含 `assets/`、`registry.py`、`docker_mariadb/`、`docker_surrogate/`）
 
 ### `bbo/task_descriptions/`
 

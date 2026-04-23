@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from bbo.tasks.surrogate.knob_space import KnobSpaceFromJson
+from bbo.tasks.dbtune.knob_space import KnobSpaceFromJson
 
 ASSETS = Path(__file__).resolve().parents[1] / "bbo" / "tasks" / "surrogate" / "assets"
 KNOBS = ASSETS / "knobs_SYSBENCH_top5.json"

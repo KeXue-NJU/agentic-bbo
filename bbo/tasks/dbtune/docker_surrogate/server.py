@@ -2,7 +2,7 @@
 """
 Sklearn surrogate HTTP API (Python 3.7).
 
-Keep task_id / joblib filenames in sync with ``bbo/tasks/surrogate/catalog.py``.
+Keep task_id / joblib filenames in sync with ``bbo/tasks/dbtune/catalog.py``.
 """
 
 from __future__ import absolute_import, division, print_function

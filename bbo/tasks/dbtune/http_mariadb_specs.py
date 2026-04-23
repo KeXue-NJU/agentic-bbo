@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
 
-# --- Knob space assets (under ``bbo/tasks/surrogate/assets/``) ---
+# --- Knob space assets (under ``bbo/tasks/dbtune/assets/``) ---
 _TOP5_JSON: Final[str] = "knobs_SYSBENCH_top5.json"
 _ALL197_JSON: Final[str] = "knobs_mysql_all_197.json"
 
@@ -33,14 +33,14 @@ class HttpDatabaseTaskSpec:
     workload_key: str
     """Must be a key in ``SYSBENCH_TEST_BY_WORKLOAD``."""
     knob_asset_filename: str
-    """File name under ``surrogate/assets/`` (e.g. ``_TOP5_JSON``)."""
+    """File name under ``dbtune/assets/`` (e.g. ``_TOP5_JSON``)."""
     display_name: str
     short_label_en: str
     short_label_zh: str
 
 
 def assets_dir() -> Path:
-    return Path(__file__).resolve().parent.parent / "surrogate" / "assets"
+    return Path(__file__).resolve().parent / "assets"
 
 
 def default_knobs_path_for_spec(spec: HttpDatabaseTaskSpec) -> Path:

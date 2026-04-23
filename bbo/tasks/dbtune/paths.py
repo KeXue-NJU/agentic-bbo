@@ -1,4 +1,4 @@
-"""Resolve bundled surrogate assets (``bbo/tasks/surrogate/assets/``)."""
+"""Resolve bundled surrogate assets (``bbo/tasks/dbtune/assets/``)."""
 
 from __future__ import annotations
 

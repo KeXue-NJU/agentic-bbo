@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from bbo.tasks.surrogate.catalog import SURROGATE_BENCHMARKS
-from bbo.tasks.surrogate.http_specs import (
+from bbo.tasks.dbtune.catalog import SURROGATE_BENCHMARKS
+from bbo.tasks.dbtune.http_surrogate_specs import (
     HTTP_SURROGATE_TASK_IDS,
     canonical_id_from_http_task_id,
     http_task_id_from_canonical,

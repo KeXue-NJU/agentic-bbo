@@ -64,13 +64,11 @@ Current family:
 
 ### `bbo/tasks/`
 
-Task implementations are also grouped by family.
-Current family:
+Task implementations are grouped by family (see also `bbo/tasks/scientific/` and `bbo/tasks/dbtune/README.md`).
 
-- `bbo/tasks/synthetic/`
-  - `branin.py`
-  - `sphere.py`
-  - `base.py`
+- `bbo/tasks/synthetic/` — toy synthetic objectives (`branin.py`, `sphere.py`, `base.py`)
+- `bbo/tasks/scientific/` — tabular / scientific BO tutorial tasks (`registry.py` + per-task modules, `data/` assets)
+- `bbo/tasks/dbtune/` — database knob tuning: offline sklearn surrogates, HTTP MariaDB/sysbench evaluators, optional HTTP surrogate servers (`assets/`, `registry.py`, `docker_mariadb/`, `docker_surrogate/`)
 
 ### `bbo/task_descriptions/`
 

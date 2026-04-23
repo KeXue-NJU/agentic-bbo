@@ -18,7 +18,7 @@ SYSBENCH_TABLES = 10
 SYSBENCH_TABLE_SIZE = 100_000
 SYSBENCH_TIME_SEC = 10
 
-# 与 ``bbo/tasks/database/specs.py`` 中 API ``workload`` 字段一致
+# 与 ``bbo/tasks/dbtune/http_mariadb_specs.py`` 中 API ``workload`` 字段一致
 ALLOWED_WORKLOADS: dict[str, str] = {
     "read_only": "oltp_read_only",
     "write_only": "oltp_write_only",

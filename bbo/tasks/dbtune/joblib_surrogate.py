@@ -41,7 +41,7 @@ class JoblibSurrogate:
                 raise RuntimeError(
                     "Failed to load surrogate joblib (file appears truncated or incomplete). "
                     f"Path: {path.resolve()}\n"
-                    "Re-download the full `.joblib` from the release link in `bbo/tasks/surrogate/assets/README.md` "
+                    "Re-download the full `.joblib` from the release link in `bbo/tasks/dbtune/assets/README.md` "
                     "or use `AGENTIC_BBO_*` to point to a full file. "
                     "If the file is tracked with Git LFS, run `git lfs pull` first."
                 ) from exc

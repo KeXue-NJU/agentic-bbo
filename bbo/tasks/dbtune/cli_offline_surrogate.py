@@ -7,7 +7,7 @@ from typing import Any
 
 from ...core import Task
 from .catalog import SURROGATE_BENCHMARKS
-from .task import create_surrogate_knob_task
+from .offline_surrogate_task import create_surrogate_knob_task
 
 INPROC_SURROGATE_TASK_NAMES: frozenset[str] = frozenset(SURROGATE_BENCHMARKS)
 

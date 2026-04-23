@@ -1,5 +1,5 @@
 """
-Registry of surrogate benchmarks backed by ``*.joblib`` files under ``bbo/tasks/surrogate/assets/``.
+Registry of surrogate benchmarks backed by ``*.joblib`` files under ``bbo/tasks/dbtune/assets/``.
 
 Large checkpoints are not in git: download from the URL in ``assets/README.md`` (same filenames
 as in ``SURROGATE_BENCHMARKS`` / ``default_joblib_filename``). ``knobs_*.json`` live in

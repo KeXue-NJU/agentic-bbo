@@ -6,7 +6,7 @@
 
 ### 你会用到的入口
 
-- **Task family**: surrogate knob tasks under `bbo/tasks/surrogate/`
+- **Task family**: surrogate knob tasks under `bbo/tasks/dbtune/`
 - **Examples**: `examples/run_knob_surrogate_demo.py`
 - **统一运行入口**：`python -m bbo.run`（推荐）或 `bbo.run.run_single_experiment()`
 - **输出位置**：默认写到 `runs/demo/` 下的 JSONL trial 日志（`trials.jsonl`）和汇总（`summary.json`）
@@ -42,16 +42,16 @@ uv run python -c "from bbo.tasks import SURROGATE_TASK_IDS; print('\\n'.join(SUR
 
 ### 准备 `*.joblib` surrogate 文件
 
-真实的大模型 checkpoint **不会**提交到仓库。请从**发布网盘**下载与任务对应的文件（见下），再放入 `bbo/tasks/surrogate/assets/` 或使用环境变量指向本地路径。
+真实的大模型 checkpoint **不会**提交到仓库。请从**发布网盘**下载与任务对应的文件（见下），再放入 `bbo/tasks/dbtune/assets/` 或使用环境变量指向本地路径。
 
 **下载地址**（与仓库 `assets/README.md` 中一致）：
 
 <https://drive.google.com/drive/folders/1qalYsF7fuCB6MewOTPvr8DDZzIj7tIRt?usp=sharing>
 
-- **方式 A（推荐）**：从上述网盘下载所需 `*.joblib`，保存到 `bbo/tasks/surrogate/assets/`，**文件名**须与 `bbo/tasks/surrogate/assets/README.md` 中的表格一致。
+- **方式 A（推荐）**：从上述网盘下载所需 `*.joblib`，保存到 `bbo/tasks/dbtune/assets/`，**文件名**须与 `bbo/tasks/dbtune/assets/README.md` 中的表格一致。
 - **方式 B**：设置环境变量，指向本机已下载的 `.joblib` 的**绝对路径**（见下表/同页 README）。
 
-文件名 ↔ `task_id` ↔ 环境变量 的对应关系见 `bbo/tasks/surrogate/assets/README.md`。
+文件名 ↔ `task_id` ↔ 环境变量 的对应关系见 `bbo/tasks/dbtune/assets/README.md`。
 
 #### 示例：Sysbench 5-knob RF
 
@@ -59,7 +59,7 @@ uv run python -c "from bbo.tasks import SURROGATE_TASK_IDS; print('\\n'.join(SUR
 
 ```bash
 # 将下载好的文件放入（路径按你本机实际下载位置调整）
-cp /你的下载目录/RF_SYSBENCH_5knob.joblib bbo/tasks/surrogate/assets/RF_SYSBENCH_5knob.joblib
+cp /你的下载目录/RF_SYSBENCH_5knob.joblib bbo/tasks/dbtune/assets/RF_SYSBENCH_5knob.joblib
 ```
 
 或用环境变量覆盖路径：
@@ -101,7 +101,7 @@ uv run python -m bbo.run \
   --seed 1 \
   --max-evaluations 60 \
   --surrogate-path /abs/path/to/RF_SYSBENCH_5knob.joblib \
-  --knobs-json-path bbo/tasks/surrogate/assets/knobs_SYSBENCH_top5.json
+  --knobs-json-path bbo/tasks/dbtune/assets/knobs_SYSBENCH_top5.json
 ```
 
 ### 运行示例脚本
@@ -143,7 +143,7 @@ runs/demo/<task>/<algorithm>/seed_<seed>/
 
 **运行**（默认 `http://127.0.0.1:8090`，与数据库评估器 8080 错开）：
 
-- 起容器：见 `bbo/tasks/surrogate/docker/README.md`（在 `bbo/tasks/surrogate` 下 `docker build -f docker/Dockerfile ...`）。
+- 起容器：见 `bbo/tasks/dbtune/docker_surrogate/README.md`（在 `bbo/tasks/dbtune` 下 `docker build -f docker_surrogate/Dockerfile ...`）。
 - 环境变量（宿主机）：`AGENTBBO_HTTP_SURROGATE_BASE_URL`、`AGENTBBO_HTTP_SURROGATE_TIMEOUT_SEC`（默认 120）
 - 列出 HTTP 型 task id：
 

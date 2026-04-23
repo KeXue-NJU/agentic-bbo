@@ -1,6 +1,6 @@
 # Background
 
-`knob_http_mariadb_sysbench_write_only_5` is a **real** MariaDB benchmark in *AgentBBO*. The optimizer proposes a point in the unit hypercube; the **HTTP evaluator** (Flask inside the image built from `bbo/tasks/database/docker/`) writes `mysqld` knobs, restarts MariaDB, and runs **sysbench**, returning a scalar **throughput** score.
+`knob_http_mariadb_sysbench_write_only_5` is a **real** MariaDB benchmark in *AgentBBO*. The optimizer proposes a point in the unit hypercube; the **HTTP evaluator** (Flask inside the image built from `bbo/tasks/dbtune/docker_mariadb/`) writes `mysqld` knobs, restarts MariaDB, and runs **sysbench**, returning a scalar **throughput** score.
 
 This packaging combines: **write-only (OLTP write)** with **five knobs from the top-5 SHAP-ranked subset (`knobs_SYSBENCH_top5.json`).**
 

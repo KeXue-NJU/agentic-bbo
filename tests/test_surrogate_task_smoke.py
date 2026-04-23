@@ -14,13 +14,13 @@ pytest.importorskip("joblib")
 def test_sysbench5_surrogate_evaluate() -> None:
     from bbo.core import TrialSuggestion
     from bbo.tasks import create_surrogate_task
-    from bbo.tasks.surrogate.paths import bundled_surrogate_sysbench5_path
+    from bbo.tasks.dbtune.paths import bundled_surrogate_sysbench5_path
 
     p = bundled_surrogate_sysbench5_path()
     if not p.is_file():
         pytest.skip(
             "No surrogate .joblib found. Download RF_SYSBENCH_5knob.joblib "
-            "(see bbo/tasks/surrogate/assets/README.md) into bbo/tasks/surrogate/assets/, "
+            "(see bbo/tasks/dbtune/assets/README.md) into bbo/tasks/dbtune/assets/, "
             "or set AGENTIC_BBO_SYSBENCH5_SURROGATE."
         )
 
@@ -43,10 +43,10 @@ def test_sysbench5_two_distinct_configs_finite() -> None:
     """Evaluate two corner-like configs; real RF should return finite throughput."""
     from bbo.core import TrialSuggestion
     from bbo.tasks import create_surrogate_task
-    from bbo.tasks.surrogate.paths import bundled_surrogate_sysbench5_path
+    from bbo.tasks.dbtune.paths import bundled_surrogate_sysbench5_path
 
     if not bundled_surrogate_sysbench5_path().is_file():
-        pytest.skip("surrogate .joblib missing — see bbo/tasks/surrogate/assets/README.md")
+        pytest.skip("surrogate .joblib missing — see bbo/tasks/dbtune/assets/README.md")
 
     task = create_surrogate_task("knob_surrogate_sysbench_5", max_evaluations=5, seed=0)
     report = task.sanity_check()

@@ -8,7 +8,7 @@ from typing import Any
 
 import numpy as np
 
-from ..surrogate.knob_space import KnobSpaceFromJson
+from .knob_space import KnobSpaceFromJson
 
 
 def feature_order_by_rank(knobs_json: str | Path) -> tuple[str, ...]:

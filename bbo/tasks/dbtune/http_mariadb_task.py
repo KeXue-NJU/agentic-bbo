@@ -24,7 +24,7 @@ from ...core import (
 )
 from ..http_json import get_json, post_json
 from .knob_encode import build_knob_space, feature_order_by_rank, physical_to_mariadb_strings
-from .specs import (
+from .http_mariadb_specs import (
     HTTP_DATABASE_TASK_IDS,
     HttpDatabaseTaskSpec,
     by_task_id,
@@ -81,7 +81,7 @@ class HttpDatabaseKnobTask(Task):
     """
     Normalized ``[0,1]^d`` knobs -> decode -> HTTP ``POST /evaluate`` -> TPS (maximize).
 
-    Requires a running container built from ``bbo/tasks/database/docker/`` (evaluator
+    Requires a running container built from ``bbo/tasks/dbtune/docker_mariadb/`` (evaluator
     must accept ``workload`` in the JSON body; see ``server.py`` in that directory).
     """
 
@@ -144,7 +144,7 @@ class HttpDatabaseKnobTask(Task):
         except RuntimeError as exc:
             raise RuntimeError(
                 f"HTTP evaluator not reachable at {self._base_url!r} ({exc}). "
-                f"Start the Docker image from bbo/tasks/database/docker/ or set {_ENV_BASE_URL}."
+                f"Start the Docker image from bbo/tasks/dbtune/docker_mariadb/ or set {_ENV_BASE_URL}."
             ) from exc
 
     def evaluate(self, suggestion: TrialSuggestion) -> EvaluationResult:

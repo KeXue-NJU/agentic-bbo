@@ -1,16 +1,16 @@
 # Surrogate HTTP evaluator (Python 3.7)
 
-Offline knob surrogates are sklearn models stored as `.joblib`. **Training and unpickling** are pinned to a Python 3.7 + compatible `numpy` / `scikit-learn` stack; the main AgentBBO code targets Python 3.11+. This image isolates that stack and exposes a small JSON API similar in spirit to `bbo/tasks/database/docker/` (MariaDB + sysbench), but for **in-memory prediction only**.
+Offline knob surrogates are sklearn models stored as `.joblib`. **Training and unpickling** are pinned to a Python 3.7 + compatible `numpy` / `scikit-learn` stack; the main AgentBBO code targets Python 3.11+. This image isolates that stack and exposes a small JSON API similar in spirit to `bbo/tasks/dbtune/docker_mariadb/` (MariaDB + sysbench), but for **in-memory prediction only**.
 
 ## Build
 
-From **`bbo/tasks/surrogate`** (repository root, then `cd bbo/tasks/surrogate`):
+From **`bbo/tasks/dbtune`** (repository root, then `cd bbo/tasks/dbtune`):
 
 ```bash
-docker build -f docker/Dockerfile -t agentbbo-surrogate-http-py37:v1 .
+docker build -f docker_surrogate/Dockerfile -t agentbbo-surrogate-http-py37:v1 .
 ```
 
-Download the required `.joblib` files from the **Google Drive** link in `../assets/README.md`, place them under `bbo/tasks/surrogate/assets/`, then build; or **mount** that folder at run time (see below) so the container sees the same files.
+Download the required `.joblib` files from the **Google Drive** link in `../assets/README.md`, place them under `bbo/tasks/dbtune/assets/`, then build; or **mount** that folder at run time (see below) so the container sees the same files.
 
 **Unpickling / `scikit-learn` version:** the image pins `scikit-learn==0.21.3` in `docker/requirements.txt` because many old RF models reference `sklearn.ensemble.forest`, which is incompatible with scikit-learn 0.22+ in the way joblib was serialized. If `joblib.load` still fails, align `scikit-learn` and `numpy` in `requirements.txt` to the same versions as the environment where the model was **trained** (`pip show scikit-learn`), then rebuild the image (no cache: `docker build --no-cache`).
 
@@ -52,8 +52,8 @@ Run BBO with e.g. `--task knob_http_surrogate_sysbench_5` and set:
 - `AGENTBBO_HTTP_SURROGATE_BASE_URL` (default `http://127.0.0.1:8090`)
 - `AGENTBBO_HTTP_SURROGATE_TIMEOUT_SEC` (default `120`)
 
-The host decodes normalized knobs using local `bbo/tasks/surrogate/assets/knobs_*.json` (must stay consistent with what you used offline).
+The host decodes normalized knobs using local `bbo/tasks/dbtune/assets/knobs_*.json` (must stay consistent with what you used offline).
 
 ## Keeping server metadata in sync
 
-`docker/server.py` lists joblib file names and env overrides. When you change `bbo/tasks/surrogate/catalog.py`, update the `TASK_DEFS` block in `server.py` or add a test that compares them.
+`docker/server.py` lists joblib file names and env overrides. When you change `bbo/tasks/dbtune/catalog.py`, update the `TASK_DEFS` block in `server.py` or add a test that compares them.

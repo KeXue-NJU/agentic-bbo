@@ -5,11 +5,11 @@ from __future__ import annotations
 from typing import Any
 
 from ...core import Task
-from .http_specs import (
+from .http_surrogate_specs import (
     HTTP_SURROGATE_TASK_IDS,
     is_http_surrogate_task_id,
 )
-from .http_task import create_http_surrogate_knob_task
+from .http_surrogate_task import create_http_surrogate_knob_task
 
 HTTP_SURROGATE_TASK_FAMILY = "http_surrogate"
 HTTP_SURROGATE_TASK_NAMES: frozenset[str] = frozenset(HTTP_SURROGATE_TASK_IDS)

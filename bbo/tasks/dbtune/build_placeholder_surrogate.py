@@ -1,12 +1,12 @@
 """Build a compact sklearn RF surrogate for Sysbench 5-knob (repo self-containment).
 
 Large checkpoints from the original project may be omitted; this writes a small
-placeholder so ``bbo.tasks.surrogate`` works without a full-size ``RF_SYSBENCH_5knob.joblib``.
+placeholder so ``bbo.tasks.dbtune`` works without a full-size ``RF_SYSBENCH_5knob.joblib``.
 
 Usage (from repo root)::
 
     uv sync --extra surrogate
-    uv run python -m bbo.tasks.surrogate.build_placeholder_surrogate
+    uv run python -m bbo.tasks.dbtune.build_placeholder_surrogate
 """
 
 from __future__ import annotations
@@ -19,11 +19,11 @@ def main() -> None:
     import numpy as np
     from sklearn.ensemble import RandomForestRegressor
 
-    from bbo.tasks.surrogate.paths import SYSBENCH_5_FEATURE_ORDER, bundled_knobs_top5_path
+    from .paths import SYSBENCH_5_FEATURE_ORDER, bundled_knobs_top5_path
 
-    # 仓库根目录：bbo/tasks/surrogate/ → 上溯三级
+    # 仓库根目录：bbo/tasks/dbtune/ → 上溯三级
     repo_root = Path(__file__).resolve().parents[3]
-    out = repo_root / "bbo" / "tasks" / "surrogate" / "assets" / "sysbench_5knob_surrogate.joblib"
+    out = repo_root / "bbo" / "tasks" / "dbtune" / "assets" / "sysbench_5knob_surrogate.joblib"
     names = list(SYSBENCH_5_FEATURE_ORDER)
     d = len(names)
     rng = np.random.default_rng(0)

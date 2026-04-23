@@ -10,7 +10,7 @@ from .registry import (
     create_task,
     get_synthetic_problem,
 )
-from .surrogate import (
+from .dbtune import (
     HTTP_SURROGATE_TASK_IDS,
     create_http_surrogate_knob_task,
     create_surrogate_knob_task,

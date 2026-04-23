@@ -1,9 +1,9 @@
 """Run optimizers on HTTP MariaDB/sysbench database tasks (Docker evaluator).
 
-Tasks are defined under ``bbo/tasks/database/`` and registered in ``bbo.tasks.registry``.
+Tasks are defined under ``bbo/tasks/dbtune/`` and registered in ``bbo.tasks.registry``.
 This script calls ``create_http_database_task`` directly (same shape as ``bbo.run.run_single_experiment``).
 
-Prerequisite: start the API from ``bbo/tasks/database/docker/`` (see each task's ``environment.md``).
+Prerequisite: start the API from ``bbo/tasks/dbtune/docker_mariadb/`` (see each task's ``environment.md``).
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from bbo.algorithms import ALGORITHM_REGISTRY, create_algorithm
 from bbo.core import ExperimentConfig, Experimenter, JsonlMetricLogger, Task
-from bbo.tasks.database import HTTP_DATABASE_TASK_IDS, create_http_database_task
+from bbo.tasks.dbtune import HTTP_DATABASE_TASK_IDS, create_http_database_task
 
 _DEFAULT_RESULTS_ROOT = _PROJECT_ROOT / "runs" / "demo"
 _DEFAULT_TASK = "knob_http_mariadb_sysbench_read_write_5"
@@ -170,7 +170,7 @@ def main() -> None:
         "--knobs-json-path",
         type=str,
         default=None,
-        help="Override knob JSON (default: per-task asset from bbo/tasks/surrogate/assets).",
+        help="Override knob JSON (default: per-task asset from bbo/tasks/dbtune/assets).",
     )
     args = parser.parse_args()
 

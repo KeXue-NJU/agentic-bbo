@@ -1,9 +1,9 @@
 # ruff: noqa: INP001
 """One-off: generate ``bbo/task_descriptions/<task_id>/`` for eight database tasks.
 
-Run from Agentbbo repo root::
+Run from AgentBBO repository root::
 
-    python bbo/tasks/database/_gen_task_markdown.py
+    python bbo/tasks/dbtune/gen_task_markdown.py
 """
 
 from __future__ import annotations
@@ -13,9 +13,10 @@ import textwrap
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(_REPO / "bbo" / "tasks" / "database"))
+if str(_REPO) not in sys.path:
+    sys.path.insert(0, str(_REPO))
 
-from specs import (  # noqa: E402
+from bbo.tasks.dbtune.http_mariadb_specs import (  # noqa: E402
     DATABASE_TASK_SPECS,
     HTTP_DATABASE_TASK_IDS,
     SYSBENCH_TEST_BY_WORKLOAD,
@@ -53,13 +54,13 @@ def _knob_paragraphs(spec) -> tuple[str, str, str]:
         return (
             "five knobs from the top-5 SHAP-ranked subset (`knobs_SYSBENCH_top5.json`).",
             "5 个旋钮（`knobs_SYSBENCH_top5.json`，与离线 `knob_surrogate_sysbench_5` 语义一致）。",
-            "`bbo/tasks/surrogate/assets/knobs_SYSBENCH_top5.json`",
+            "`bbo/tasks/dbtune/assets/knobs_SYSBENCH_top5.json`",
         )
     if spec.knob_asset_filename == "knobs_mysql_all_197.json":
         return (
             "the full **~197-dimensional** knob list (`knobs_mysql_all_197.json`), matching the offline `knob_surrogate_sysbench_all` space.",
             "约 197 维全量 MySQL 旋钮（`knobs_mysql_all_197.json`），与离线全量 surrogate 任务维度一致。",
-            "`bbo/tasks/surrogate/assets/knobs_mysql_all_197.json`",
+            "`bbo/tasks/dbtune/assets/knobs_mysql_all_197.json`",
         )
     raise ValueError(spec.knob_asset_filename)
 
@@ -74,7 +75,7 @@ def _write_one(spec_id: str) -> None:
 
     background = f"""# Background
 
-`{spec.task_id}` is a **real** MariaDB benchmark in *AgentBBO*. The optimizer proposes a point in the unit hypercube; the **HTTP evaluator** (Flask inside the image built from `bbo/tasks/database/docker/`) writes `mysqld` knobs, restarts MariaDB, and runs **sysbench**, returning a scalar **throughput** score.
+`{spec.task_id}` is a **real** MariaDB benchmark in *AgentBBO*. The optimizer proposes a point in the unit hypercube; the **HTTP evaluator** (Flask inside the image built from `bbo/tasks/dbtune/docker_mariadb/`) writes `mysqld` knobs, restarts MariaDB, and runs **sysbench**, returning a scalar **throughput** score.
 
 This packaging combines: **{wl_en}** with **{knob_en}**
 
@@ -187,7 +188,7 @@ When reporting results, list **image digest / git commit**, this `task_id`, and 
 ## Shared Docker build (all eight database HTTP tasks)
 
 ```bash
-cd bbo/tasks/database/docker
+cd bbo/tasks/dbtune/docker_mariadb
 docker build -t agentbbo-http-mariadb-eval:v1 .
 docker rm -f agentbbo_http_mariadb_eval 2>/dev/null
 docker run -d --name agentbbo_http_mariadb_eval -p 8080:8080 agentbbo-http-mariadb-eval:v1

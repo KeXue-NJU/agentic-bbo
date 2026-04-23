@@ -3,7 +3,7 @@
 ## Shared Docker build (all eight database HTTP tasks)
 
 ```bash
-cd bbo/tasks/database/docker
+cd bbo/tasks/dbtune/docker_mariadb
 docker build -t agentbbo-http-mariadb-eval:v1 .
 docker rm -f agentbbo_http_mariadb_eval 2>/dev/null
 docker run -d --name agentbbo_http_mariadb_eval -p 8080:8080 agentbbo-http-mariadb-eval:v1
@@ -24,6 +24,6 @@ After pulling changes to `server.py` (notably the `workload` field), **rebuild**
 |------|--------|
 | `task_id` | `knob_http_mariadb_sysbench_read_only_5` |
 | `workload` (JSON) | `read_only` -> `oltp_read_only` |
-| Knob JSON (default) | `bbo/tasks/surrogate/assets/knobs_SYSBENCH_top5.json` |
+| Knob JSON (default) | `bbo/tasks/dbtune/assets/knobs_SYSBENCH_top5.json` |
 
 Health check: `GET /health` on the same base URL.

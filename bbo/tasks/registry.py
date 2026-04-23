@@ -3,24 +3,24 @@
 from __future__ import annotations
 
 from ..core import Task
-from .database.cli_support import (
+from .dbtune.cli_mariadb_http import (
     DATABASE_TASK_NAMES,
     create_database_task_for_registry,
     database_registry_entries,
 )
-from .surrogate.cli_support import (
+from .dbtune.cli_http_surrogate import (
     HTTP_SURROGATE_TASK_NAMES,
     create_http_surrogate_task_for_registry,
     http_surrogate_registry_entries,
 )
-from .scientific import SCIENTIFIC_TASK_REGISTRY, create_scientific_task
-from .surrogate import SURROGATE_BENCHMARKS
-from .surrogate.cli_support_inproc import (
+from .dbtune import SURROGATE_BENCHMARKS
+from .dbtune.cli_offline_surrogate import (
     INPROC_SURROGATE_TASK_NAMES,
     create_inproc_surrogate_task_for_registry,
     inproc_surrogate_registry_entries,
 )
-from .surrogate.http_specs import HTTP_SURROGATE_TASK_IDS
+from .dbtune.http_surrogate_specs import HTTP_SURROGATE_TASK_IDS
+from .scientific import SCIENTIFIC_TASK_REGISTRY, create_scientific_task
 from .synthetic import (
     BRANIN_DEFINITION,
     SPHERE_DEFINITION,

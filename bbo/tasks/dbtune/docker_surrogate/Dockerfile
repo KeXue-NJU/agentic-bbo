@@ -1,5 +1,5 @@
-# Build from ``bbo/tasks/surrogate`` (parent of this directory):
-#   docker build -f docker/Dockerfile -t agentbbo-surrogate-http-py37:v1 .
+# Build from ``bbo/tasks/dbtune`` (context = this package root):
+#   cd bbo/tasks/dbtune && docker build -f docker_surrogate/Dockerfile -t agentbbo-surrogate-http-py37:v1 .
 # Includes ``assets/`` (joblib + knobs json for decode paths on the host; server reads joblib from here).
 FROM python:3.7-slim-bullseye
 
@@ -10,10 +10,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY docker/requirements.txt /app/requirements.txt
+COPY docker_surrogate/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-COPY docker/server.py /app/server.py
+COPY docker_surrogate/server.py /app/server.py
 COPY knob_space.py /app/knob_space.py
 COPY assets /app/assets
 

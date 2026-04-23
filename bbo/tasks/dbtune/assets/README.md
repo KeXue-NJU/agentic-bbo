@@ -2,7 +2,7 @@
 
 ## Download large `*.joblib` files
 
-Large checkpoint files are **not** committed to this repository. **Download** them (same filenames as below) from the shared release folder, then place them under `bbo/tasks/surrogate/assets/`:
+Large checkpoint files are **not** committed to this repository. **Download** them (same filenames as below) from the shared release folder, then place them under `bbo/tasks/dbtune/assets/`:
 
 [https://drive.google.com/drive/folders/1qalYsF7fuCB6MewOTPvr8DDZzIj7tIRt?usp=sharing](https://drive.google.com/drive/folders/1qalYsF7fuCB6MewOTPvr8DDZzIj7tIRt?usp=sharing)
 
@@ -21,11 +21,11 @@ Each `*.joblib` is a **serialized sklearn surrogate** (RF, etc.): it maps physic
 | `pg_5.joblib` | `knob_surrogate_pg_5` | `AGENTIC_BBO_PG5_SURROGATE` |
 | `pg_20.joblib` | `knob_surrogate_pg_20` | `AGENTIC_BBO_PG20_SURROGATE` |
 
-For Sysbench-5, you can also use a **tiny** placeholder from `python -m bbo.tasks.surrogate.build_placeholder_surrogate` (`sysbench_5knob_surrogate.joblib`) for quick smoke tests.
+For Sysbench-5, you can also use a **tiny** placeholder from `python -m bbo.tasks.dbtune.build_placeholder_surrogate` (`sysbench_5knob_surrogate.joblib`) for quick smoke tests.
 
 ## Bundled knobs JSON
 
-`knobs_*.json` files in this directory define knob bounds and types; the mapping from task id to filename is in `bbo/tasks/surrogate/catalog.py` (`default_knobs_json_filename` per benchmark).
+`knobs_*.json` files in this directory define knob bounds and types; the mapping from task id to filename is in `bbo/tasks/dbtune/catalog.py` (`default_knobs_json_filename` per benchmark).
 
 ## Tests / demo
 

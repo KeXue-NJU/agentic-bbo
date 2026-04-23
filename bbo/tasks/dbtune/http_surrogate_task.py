@@ -22,7 +22,7 @@ from ...core import (
 )
 from ..http_json import get_json, post_json
 from .catalog import SURROGATE_BENCHMARKS, default_knobs_json_path, resolve_bundled_joblib_path
-from .http_specs import (
+from .http_surrogate_specs import (
     _DEFAULT_BASE_URL,
     _DEFAULT_TIMEOUT,
     _ENV_SURROGATE_BASE,
@@ -152,7 +152,7 @@ class HttpSurrogateKnobTask(Task):
         except RuntimeError as exc:
             raise RuntimeError(
                 f"HTTP surrogate not reachable at {self._base_url!r} ({exc!s}). "
-                f"Build/run ``bbo/tasks/surrogate/docker/`` (Python 3.7) or set {_ENV_SURROGATE_BASE}."
+                f"Build/run ``bbo/tasks/dbtune/docker_surrogate/`` (Python 3.7) or set {_ENV_SURROGATE_BASE}."
             ) from exc
 
     def evaluate(self, suggestion: TrialSuggestion) -> EvaluationResult:
