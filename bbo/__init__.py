@@ -16,6 +16,7 @@ __all__ = [
     "BBOPLACE_DEFAULT_DEFINITION",
     "BBOPLACE_TASK_KEY",
     "BRANIN_DEFINITION",
+    "BUDGETED_SPHERE_TASK_KEY",
     "BBOPlaceDefinition",
     "BBOPlaceTask",
     "BBOPlaceTaskConfig",
@@ -68,6 +69,7 @@ def __getattr__(name: str):
         return getattr(_algorithms, name)
     if name in {
         "BRANIN_DEFINITION",
+        "BUDGETED_SPHERE_TASK_KEY",
         "SPHERE_DEFINITION",
         "ALL_DEMO_TASK_NAMES",
         "ALL_TASK_NAMES",

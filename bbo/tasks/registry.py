@@ -25,10 +25,14 @@ from .bboplace import BBOPLACE_TASK_KEY, create_bboplace_task
 from .scientific import SCIENTIFIC_TASK_REGISTRY, create_scientific_task
 from .synthetic import (
     BRANIN_DEFINITION,
+    BUDGETED_SPHERE_TASK_KEY,
     SPHERE_DEFINITION,
+    BudgetedSphereTask,
+    BudgetedSphereTaskConfig,
     SyntheticFunctionDefinition,
     SyntheticFunctionTask,
     SyntheticFunctionTaskConfig,
+    create_budgeted_sphere_task,
 )
 
 SYNTHETIC_PROBLEM_REGISTRY: dict[str, SyntheticFunctionDefinition] = {
@@ -37,6 +41,7 @@ SYNTHETIC_PROBLEM_REGISTRY: dict[str, SyntheticFunctionDefinition] = {
 }
 TASK_REGISTRY: dict[str, str] = {
     **{name: "synthetic" for name in SYNTHETIC_PROBLEM_REGISTRY},
+    BUDGETED_SPHERE_TASK_KEY: "synthetic",
     **{name: "scientific" for name in SCIENTIFIC_TASK_REGISTRY},
     **database_registry_entries(),
     **inproc_surrogate_registry_entries(),
@@ -49,7 +54,7 @@ SURROGATE_TASK_IDS: tuple[str, ...] = tuple(sorted(SURROGATE_BENCHMARKS))
 
 TASK_FAMILIES: dict[str, tuple[str, ...]] = {
     "scientific": tuple(sorted(SCIENTIFIC_TASK_REGISTRY)),
-    "synthetic": tuple(sorted(SYNTHETIC_PROBLEM_REGISTRY)),
+    "synthetic": tuple(sorted([*SYNTHETIC_PROBLEM_REGISTRY, BUDGETED_SPHERE_TASK_KEY])),
     "dbtune_surrogate": tuple(sorted(INPROC_SURROGATE_TASK_NAMES)),
     "dbtune_mariadb": tuple(sorted(DBTUNE_MARIADB_TASK_NAMES)),
     "dbtune_surrogate_service": tuple(sorted(DBTUNE_SURROGATE_SERVICE_TASK_NAMES)),
@@ -57,7 +62,7 @@ TASK_FAMILIES: dict[str, tuple[str, ...]] = {
 }
 
 ALL_DEMO_TASK_NAMES: tuple[str, ...] = tuple(
-    sorted([*SYNTHETIC_PROBLEM_REGISTRY.keys(), BBOPLACE_TASK_KEY]),
+    sorted([*SYNTHETIC_PROBLEM_REGISTRY.keys(), BUDGETED_SPHERE_TASK_KEY, BBOPLACE_TASK_KEY]),
 )
 
 
@@ -84,6 +89,11 @@ def create_demo_task(
             noise_std=noise_std,
         )
         return SyntheticFunctionTask(config=config, definition=get_synthetic_problem(problem))
+    if problem == BUDGETED_SPHERE_TASK_KEY:
+        return create_budgeted_sphere_task(
+            max_evaluations=max_evaluations,
+            seed=seed,
+        )
     if problem in SCIENTIFIC_TASK_REGISTRY:
         return create_scientific_task(
             problem,
@@ -152,6 +162,7 @@ def get_scientific_task(name: str) -> str:
 __all__ = [
     "ALL_DEMO_TASK_NAMES",
     "BBOPLACE_TASK_KEY",
+    "BUDGETED_SPHERE_TASK_KEY",
     "ALL_TASK_NAMES",
     "DBTUNE_SURROGATE_SERVICE_TASK_IDS",
     "HTTP_SURROGATE_TASK_IDS",

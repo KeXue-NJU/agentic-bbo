@@ -64,10 +64,14 @@ from .scientific import (
 )
 from .synthetic import (
     BRANIN_DEFINITION,
+    BUDGETED_SPHERE_TASK_KEY,
+    BudgetedSphereTask,
+    BudgetedSphereTaskConfig,
     SPHERE_DEFINITION,
     SyntheticFunctionDefinition,
     SyntheticFunctionTask,
     SyntheticFunctionTaskConfig,
+    create_budgeted_sphere_task,
 )
 
 __all__ = [
@@ -77,6 +81,9 @@ __all__ = [
     "BBOPLACE_DEFAULT_DEFINITION",
     "BBOPLACE_TASK_KEY",
     "BRANIN_DEFINITION",
+    "BUDGETED_SPHERE_TASK_KEY",
+    "BudgetedSphereTask",
+    "BudgetedSphereTaskConfig",
     "DBTUNE_MARIADB_TASK_FAMILY",
     "DBTUNE_MARIADB_TASK_IDS",
     "DBTUNE_MARIADB_TASK_NAMES",
@@ -115,6 +122,7 @@ __all__ = [
     "SyntheticFunctionTask",
     "SyntheticFunctionTaskConfig",
     "create_bboplace_task",
+    "create_budgeted_sphere_task",
     "create_dbtune_mariadb_task",
     "create_dbtune_surrogate_service_task",
     "create_demo_task",
