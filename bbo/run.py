@@ -137,6 +137,7 @@ def run_single_experiment(
     algorithm_name: str,
     seed: int,
     max_evaluations: int | None = None,
+    task_kwargs: dict[str, Any] | None = None,
     results_root: Path = DEFAULT_RESULTS_ROOT,
     resume: bool = False,
     sigma_fraction: float = 0.18,
@@ -189,17 +190,17 @@ def run_single_experiment(
     opro_openai_timeout_seconds: float = 30.0,
     opro_openai_max_retries: int = 3,
 ) -> dict[str, Any]:
-    task_kwargs: dict[str, Any] = {}
+    resolved_task_kwargs = dict(task_kwargs or {})
     if surrogate_path is not None:
-        task_kwargs["surrogate_path"] = surrogate_path
+        resolved_task_kwargs["surrogate_path"] = surrogate_path
     if knobs_json_path is not None:
-        task_kwargs["knobs_json_path"] = knobs_json_path
+        resolved_task_kwargs["knobs_json_path"] = knobs_json_path
     task = create_task(
         task_name,
         max_evaluations=max_evaluations,
         seed=seed,
         noise_std=noise_std,
-        **task_kwargs,
+        **resolved_task_kwargs,
     )
     _require_algorithm_support(task, algorithm_name)
     run_dir = _allocate_run_dir(results_root / task_name / algorithm_name / f"seed_{seed}", resume=resume)

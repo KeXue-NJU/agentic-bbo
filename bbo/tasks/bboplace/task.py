@@ -301,6 +301,7 @@ def create_bboplace_task(
     post_json: PostJsonFn | None = None,
     http_timeout_seconds: float = DEFAULT_HTTP_TIMEOUT_S,
     metadata: dict[str, str] | None = None,
+    **_kwargs: Any,
 ) -> BBOPlaceTask:
     """Factory for the default BBOPlace-Bench task."""
     config = BBOPlaceTaskConfig(
