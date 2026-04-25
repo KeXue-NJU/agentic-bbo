@@ -1,6 +1,6 @@
 # Environment Setup
 
-This task wraps a published BBOPlace-Bench evaluator image behind an HTTP API instead of rebuilding the full upstream benchmark inside this repository.
+This task wraps a published BBOPlace-Bench evaluator image as an external service instead of rebuilding the full upstream benchmark inside this repository.
 The current published image referenced by this repo is `gaozhixuan/bboplace-bench` on Docker Hub.
 
 ## Host requirements
@@ -49,4 +49,4 @@ uv run python -m bbo.run --algorithm random_search --task bboplace_bench --max-e
 ```
 
 A healthy setup should complete without connection or JSON-schema errors and write run artifacts under `artifacts/`.
-If you need the full upstream workflow, such as rebuilding DREAMPlace, downloading benchmark datasets, or running SP / HPO / GP-HPWL / PPA pipelines, follow the official BBOPlace-Bench repository rather than this lightweight HTTP wrapper.
+If you need the full upstream workflow, such as rebuilding DREAMPlace, downloading benchmark datasets, or running SP / HPO / GP-HPWL / PPA pipelines, follow the official BBOPlace-Bench repository rather than this lightweight service wrapper.

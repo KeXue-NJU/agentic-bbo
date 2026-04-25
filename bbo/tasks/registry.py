@@ -3,15 +3,16 @@
 from __future__ import annotations
 
 from ..core import Task
+from .dbtune.cli_http_surrogate import (
+    DBTUNE_SURROGATE_SERVICE_TASK_NAMES,
+    create_dbtune_surrogate_service_task_for_registry,
+    dbtune_surrogate_service_registry_entries,
+)
 from .dbtune.cli_mariadb_http import (
     DATABASE_TASK_NAMES,
+    DBTUNE_MARIADB_TASK_NAMES,
     create_database_task_for_registry,
     database_registry_entries,
-)
-from .dbtune.cli_http_surrogate import (
-    HTTP_SURROGATE_TASK_NAMES,
-    create_http_surrogate_task_for_registry,
-    http_surrogate_registry_entries,
 )
 from .dbtune import SURROGATE_BENCHMARKS
 from .dbtune.cli_offline_surrogate import (
@@ -19,7 +20,7 @@ from .dbtune.cli_offline_surrogate import (
     create_inproc_surrogate_task_for_registry,
     inproc_surrogate_registry_entries,
 )
-from .dbtune.http_surrogate_specs import HTTP_SURROGATE_TASK_IDS
+from .dbtune.http_surrogate_specs import DBTUNE_SURROGATE_SERVICE_TASK_IDS, HTTP_SURROGATE_TASK_IDS
 from .bboplace import BBOPLACE_TASK_KEY, create_bboplace_task
 from .scientific import SCIENTIFIC_TASK_REGISTRY, create_scientific_task
 from .synthetic import (
@@ -39,7 +40,7 @@ TASK_REGISTRY: dict[str, str] = {
     **{name: "scientific" for name in SCIENTIFIC_TASK_REGISTRY},
     **database_registry_entries(),
     **inproc_surrogate_registry_entries(),
-    **http_surrogate_registry_entries(),
+    **dbtune_surrogate_service_registry_entries(),
     BBOPLACE_TASK_KEY: "bboplace",
 }
 ALL_TASK_NAMES: tuple[str, ...] = tuple(sorted(TASK_REGISTRY))
@@ -49,9 +50,9 @@ SURROGATE_TASK_IDS: tuple[str, ...] = tuple(sorted(SURROGATE_BENCHMARKS))
 TASK_FAMILIES: dict[str, tuple[str, ...]] = {
     "scientific": tuple(sorted(SCIENTIFIC_TASK_REGISTRY)),
     "synthetic": tuple(sorted(SYNTHETIC_PROBLEM_REGISTRY)),
-    "surrogate": tuple(sorted(INPROC_SURROGATE_TASK_NAMES)),
-    "database": tuple(sorted(DATABASE_TASK_NAMES)),
-    "http_surrogate": tuple(sorted(HTTP_SURROGATE_TASK_NAMES)),
+    "dbtune_surrogate": tuple(sorted(INPROC_SURROGATE_TASK_NAMES)),
+    "dbtune_mariadb": tuple(sorted(DBTUNE_MARIADB_TASK_NAMES)),
+    "dbtune_surrogate_service": tuple(sorted(DBTUNE_SURROGATE_SERVICE_TASK_NAMES)),
     "bboplace": (BBOPLACE_TASK_KEY,),
 }
 
@@ -106,8 +107,8 @@ def create_demo_task(
             noise_std=noise_std,
             **kwargs,
         )
-    if problem in HTTP_SURROGATE_TASK_NAMES:
-        return create_http_surrogate_task_for_registry(
+    if problem in DBTUNE_SURROGATE_SERVICE_TASK_NAMES:
+        return create_dbtune_surrogate_service_task_for_registry(
             problem,
             max_evaluations=max_evaluations,
             seed=seed,
@@ -152,6 +153,7 @@ __all__ = [
     "ALL_DEMO_TASK_NAMES",
     "BBOPLACE_TASK_KEY",
     "ALL_TASK_NAMES",
+    "DBTUNE_SURROGATE_SERVICE_TASK_IDS",
     "HTTP_SURROGATE_TASK_IDS",
     "SURROGATE_TASK_IDS",
     "SCIENTIFIC_TASK_REGISTRY",

@@ -1,4 +1,4 @@
-"""Static definitions for the eight HTTP MariaDB/sysbench database tasks (2× knobs × 4 workloads)."""
+"""Static definitions for the eight dbtune MariaDB/sysbench tasks (2× knobs × 4 workloads)."""
 
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ DATABASE_TASK_SPECS: dict[str, HttpDatabaseTaskSpec] = {
         task_id="knob_http_mariadb_sysbench_read_only_5",
         workload_key=WORKLOAD_READ_ONLY,
         knob_asset_filename=_TOP5_JSON,
-        display_name="MariaDB/sysbench read-only, 5 knobs (HTTP)",
+        display_name="MariaDB/sysbench read-only, 5 knobs",
         short_label_en="read-only, 5 knobs",
         short_label_zh="只读、5 旋钮",
     ),
@@ -72,7 +72,7 @@ DATABASE_TASK_SPECS: dict[str, HttpDatabaseTaskSpec] = {
         task_id="knob_http_mariadb_sysbench_write_only_5",
         workload_key=WORKLOAD_WRITE_ONLY,
         knob_asset_filename=_TOP5_JSON,
-        display_name="MariaDB/sysbench write-only, 5 knobs (HTTP)",
+        display_name="MariaDB/sysbench write-only, 5 knobs",
         short_label_en="write-only, 5 knobs",
         short_label_zh="只写、5 旋钮",
     ),
@@ -80,7 +80,7 @@ DATABASE_TASK_SPECS: dict[str, HttpDatabaseTaskSpec] = {
         task_id="knob_http_mariadb_sysbench_read_write_5",
         workload_key=WORKLOAD_READ_WRITE,
         knob_asset_filename=_TOP5_JSON,
-        display_name="MariaDB/sysbench read/write, 5 knobs (HTTP)",
+        display_name="MariaDB/sysbench read/write, 5 knobs",
         short_label_en="read/write, 5 knobs",
         short_label_zh="读写在同一事务里、5 旋钮",
     ),
@@ -88,7 +88,7 @@ DATABASE_TASK_SPECS: dict[str, HttpDatabaseTaskSpec] = {
         task_id="knob_http_mariadb_sysbench_point_select_5",
         workload_key=WORKLOAD_POINT_SELECT,
         knob_asset_filename=_TOP5_JSON,
-        display_name="MariaDB/sysbench point select, 5 knobs (HTTP)",
+        display_name="MariaDB/sysbench point select, 5 knobs",
         short_label_en="point select, 5 knobs",
         short_label_zh="点查询、5 旋钮",
     ),
@@ -96,7 +96,7 @@ DATABASE_TASK_SPECS: dict[str, HttpDatabaseTaskSpec] = {
         task_id="knob_http_mariadb_sysbench_read_only_all",
         workload_key=WORKLOAD_READ_ONLY,
         knob_asset_filename=_ALL197_JSON,
-        display_name="MariaDB/sysbench read-only, full knob list (HTTP)",
+        display_name="MariaDB/sysbench read-only, full knob list",
         short_label_en="read-only, full knob list",
         short_label_zh="只读、全量旋钮",
     ),
@@ -104,7 +104,7 @@ DATABASE_TASK_SPECS: dict[str, HttpDatabaseTaskSpec] = {
         task_id="knob_http_mariadb_sysbench_write_only_all",
         workload_key=WORKLOAD_WRITE_ONLY,
         knob_asset_filename=_ALL197_JSON,
-        display_name="MariaDB/sysbench write-only, full knob list (HTTP)",
+        display_name="MariaDB/sysbench write-only, full knob list",
         short_label_en="write-only, full knob list",
         short_label_zh="只写、全量旋钮",
     ),
@@ -112,7 +112,7 @@ DATABASE_TASK_SPECS: dict[str, HttpDatabaseTaskSpec] = {
         task_id="knob_http_mariadb_sysbench_read_write_all",
         workload_key=WORKLOAD_READ_WRITE,
         knob_asset_filename=_ALL197_JSON,
-        display_name="MariaDB/sysbench read/write, full knob list (HTTP)",
+        display_name="MariaDB/sysbench read/write, full knob list",
         short_label_en="read/write, full knob list",
         short_label_zh="读写、全量旋钮",
     ),
@@ -120,15 +120,17 @@ DATABASE_TASK_SPECS: dict[str, HttpDatabaseTaskSpec] = {
         task_id="knob_http_mariadb_sysbench_point_select_all",
         workload_key=WORKLOAD_POINT_SELECT,
         knob_asset_filename=_ALL197_JSON,
-        display_name="MariaDB/sysbench point select, full knob list (HTTP)",
+        display_name="MariaDB/sysbench point select, full knob list",
         short_label_en="point select, full knob list",
         short_label_zh="点查询、全量旋钮",
     ),
 }
 
 HTTP_DATABASE_TASK_IDS: tuple[str, ...] = tuple(sorted(DATABASE_TASK_SPECS))
+DBTUNE_MARIADB_TASK_IDS: tuple[str, ...] = HTTP_DATABASE_TASK_IDS
 
 __all__ = [
+    "DBTUNE_MARIADB_TASK_IDS",
     "DATABASE_TASK_SPECS",
     "HTTP_DATABASE_TASK_IDS",
     "HttpDatabaseTaskSpec",

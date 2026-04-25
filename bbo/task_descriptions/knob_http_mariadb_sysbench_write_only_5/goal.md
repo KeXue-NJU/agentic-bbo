@@ -4,6 +4,6 @@
 
 - **Search space:** one float in `[0,1]` per exposed knob, decoded to physical values with the same rules as the surrogate `KnobSpaceFromJson` helper.
 - **One evaluation** = one successful `POST /evaluate` with `{"knobs":{...},"workload":"write_only"}` that runs **``oltp_write_only``** under the fixed `server.py` parameters.
-- **Valid run:** HTTP `status` is `success` and the returned objective is finite.
+- **Valid run:** evaluator `status` is `success` and the returned objective is finite.
 
 Comparative benchmarks should keep **image version, `server.py` timing, and hardware** fixed.

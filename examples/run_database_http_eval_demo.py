@@ -1,7 +1,7 @@
-"""Run optimizers on HTTP MariaDB/sysbench database tasks (Docker evaluator).
+"""Run optimizers on dbtune MariaDB/sysbench tasks (Docker evaluator).
 
 Tasks are defined under ``bbo/tasks/dbtune/`` and registered in ``bbo.tasks.registry``.
-This script calls ``create_http_database_task`` directly (same shape as ``bbo.run.run_single_experiment``).
+This script calls ``create_dbtune_mariadb_task`` directly (same shape as ``bbo.run.run_single_experiment``).
 
 Prerequisite: start the API from ``bbo/tasks/dbtune/docker_mariadb/`` (see each task's ``environment.md``).
 """
@@ -21,7 +21,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from bbo.algorithms import ALGORITHM_REGISTRY, create_algorithm
 from bbo.core import ExperimentConfig, Experimenter, JsonlMetricLogger, Task
-from bbo.tasks.dbtune import HTTP_DATABASE_TASK_IDS, create_http_database_task
+from bbo.tasks.dbtune import DBTUNE_MARIADB_TASK_IDS, create_dbtune_mariadb_task
 
 _DEFAULT_RESULTS_ROOT = _PROJECT_ROOT / "runs" / "demo"
 _DEFAULT_TASK = "knob_http_mariadb_sysbench_read_write_5"
@@ -53,7 +53,7 @@ def _require_algorithm_support(task: Task, algorithm_name: str) -> None:
         ) from exc
 
 
-def run_database_http_experiment(
+def run_dbtune_mariadb_experiment(
     *,
     task_id: str,
     algorithm_name: str,
@@ -68,7 +68,7 @@ def run_database_http_experiment(
     http_skip_health_check: bool,
     knobs_json_path: str | None,
 ) -> dict[str, Any]:
-    task = create_http_database_task(
+    task = create_dbtune_mariadb_task(
         task_id,
         max_evaluations=max_evaluations,
         seed=seed,
@@ -127,15 +127,18 @@ def run_database_http_experiment(
     return serializable_summary
 
 
+run_database_http_experiment = run_dbtune_mariadb_experiment
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Database HTTP evaluator demo (MariaDB/sysbench TPS via Docker API)."
+        description="dbtune MariaDB evaluator demo (MariaDB/sysbench TPS via Docker API)."
     )
     parser.add_argument(
         "--task",
         default=_DEFAULT_TASK,
-        choices=sorted(HTTP_DATABASE_TASK_IDS),
-        help="One of the eight database HTTP task ids (default: read/write, 5 knobs).",
+        choices=sorted(DBTUNE_MARIADB_TASK_IDS),
+        help="One of the eight dbtune MariaDB task ids (default: read/write, 5 knobs).",
     )
     parser.add_argument(
         "--algorithm",
@@ -174,7 +177,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    summary = run_database_http_experiment(
+    summary = run_dbtune_mariadb_experiment(
         task_id=args.task,
         algorithm_name=args.algorithm,
         seed=args.seed,

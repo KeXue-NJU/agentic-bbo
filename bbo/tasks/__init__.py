@@ -12,6 +12,7 @@ from .bboplace import (
 from .registry import (
     ALL_DEMO_TASK_NAMES,
     ALL_TASK_NAMES,
+    DBTUNE_SURROGATE_SERVICE_TASK_IDS,
     HTTP_SURROGATE_TASK_IDS,
     SCIENTIFIC_TASK_REGISTRY,
     SURROGATE_TASK_IDS,
@@ -23,7 +24,12 @@ from .registry import (
     get_synthetic_problem,
 )
 from .dbtune import (
+    DBTUNE_MARIADB_TASK_FAMILY,
+    DBTUNE_MARIADB_TASK_IDS,
+    DBTUNE_MARIADB_TASK_NAMES,
     create_http_surrogate_knob_task,
+    create_dbtune_mariadb_task,
+    create_dbtune_surrogate_service_task,
     create_surrogate_knob_task,
     create_surrogate_task,
 )
@@ -71,6 +77,10 @@ __all__ = [
     "BBOPLACE_DEFAULT_DEFINITION",
     "BBOPLACE_TASK_KEY",
     "BRANIN_DEFINITION",
+    "DBTUNE_MARIADB_TASK_FAMILY",
+    "DBTUNE_MARIADB_TASK_IDS",
+    "DBTUNE_MARIADB_TASK_NAMES",
+    "DBTUNE_SURROGATE_SERVICE_TASK_IDS",
     "GUACAMOL_QED_TASK_NAME",
     "HEA_COMPONENTS",
     "HEA_DESIGN_FEATURES",
@@ -105,6 +115,8 @@ __all__ = [
     "SyntheticFunctionTask",
     "SyntheticFunctionTaskConfig",
     "create_bboplace_task",
+    "create_dbtune_mariadb_task",
+    "create_dbtune_surrogate_service_task",
     "create_demo_task",
     "default_bboplace_definition",
     "create_bh_task",

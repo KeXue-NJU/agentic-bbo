@@ -1,4 +1,4 @@
-"""BBOPlace-Bench macro placement benchmark (HTTP black-box HPWL)."""
+"""BBOPlace-Bench macro placement benchmark (service-backed HPWL)."""
 
 from __future__ import annotations
 
@@ -118,7 +118,7 @@ def default_bboplace_definition(
     default_max_evaluations: int = 40,
     description_dir: Path | None = None,
 ) -> BBOPlaceDefinition:
-    """Default BBOPlace task matching the reference HTTP API."""
+    """Default BBOPlace task matching the published evaluator contract."""
     resolved_base = base_url or os.environ.get("BBOPLACE_BASE_URL", DEFAULT_BASE_URL)
     resolved_description_dir = description_dir or (TASK_DESCRIPTION_ROOT / key)
     space = _build_macro_placement_space(n_macro=n_macro, n_grid_x=n_grid_x, n_grid_y=n_grid_y)
@@ -126,7 +126,8 @@ def default_bboplace_definition(
         key=key,
         display_name=f"BBOPlace-Bench ({benchmark}, {n_macro} macros)",
         description=(
-            "Macro placement on chip benchmarks via HTTP: minimize HPWL under grid bounds. "
+            "Macro placement on chip benchmarks via an external evaluator service: "
+            "minimize HPWL under grid bounds. "
             "True optimum is unknown."
         ),
         search_space=space,
@@ -157,7 +158,7 @@ class BBOPlaceTaskConfig:
 
 
 class BBOPlaceTask(Task):
-    """Black-box task that queries the BBOPlace-Bench HTTP evaluator for HPWL."""
+    """Black-box task that queries the published BBOPlace-Bench evaluator for HPWL."""
 
     def __init__(
         self,

@@ -1,4 +1,4 @@
-"""BBO task: evaluate sklearn joblib surrogate via HTTP (Python 3.7 Docker)."""
+"""BBO task: evaluate sklearn joblib surrogate via the packaged dbtune service."""
 
 from __future__ import annotations
 
@@ -23,12 +23,13 @@ from ...core import (
 from ..http_json import get_json, post_json
 from .catalog import SURROGATE_BENCHMARKS, default_knobs_json_path, resolve_bundled_joblib_path
 from .http_surrogate_specs import (
+    DBTUNE_SURROGATE_SERVICE_TASK_IDS,
     _DEFAULT_BASE_URL,
     _DEFAULT_TIMEOUT,
     _ENV_SURROGATE_BASE,
     _ENV_SURROGATE_TIMEOUT,
     canonical_id_from_http_task_id,
-    is_http_surrogate_task_id,
+    is_dbtune_surrogate_service_task_id,
 )
 # 与 Docker server 的 JSON 协议一致
 _EVALUATE_PATH = "/evaluate"
@@ -72,7 +73,7 @@ class HttpSurrogateKnobTaskConfig:
 
 class HttpSurrogateKnobTask(Task):
     """
-    与真实库任务一样：宿主机只发 HTTP 请求，评估在 Docker 内完成。
+    与真实库任务一样：宿主机只发请求，评估在 Docker 内完成。
 
     搜索域是单位超立方体 ``[0,1]^d``；每次评估 ``POST /evaluate`` 发送 **归一化向量** ``x``，
     容器内用 knobs JSON 解码并 ``predict``，返回 **标量** ``y``（throughput / latency 等）。
@@ -80,10 +81,10 @@ class HttpSurrogateKnobTask(Task):
 
     def __init__(self, config: HttpSurrogateKnobTaskConfig) -> None:
         self._config = config
-        if not is_http_surrogate_task_id(config.http_task_id):
+        if not is_dbtune_surrogate_service_task_id(config.http_task_id):
             raise ValueError(
-                f"Unknown HTTP surrogate task_id `{config.http_task_id}`. "
-                f"Valid ids follow pattern `knob_http_surrogate_*` from catalog."
+                f"Unknown dbtune surrogate-service task_id `{config.http_task_id}`. "
+                f"Known ids: {', '.join(sorted(DBTUNE_SURROGATE_SERVICE_TASK_IDS))}"
             )
         self._canonical_id = canonical_id_from_http_task_id(config.http_task_id)
         self._bench = SURROGATE_BENCHMARKS[self._canonical_id]
@@ -133,7 +134,7 @@ class HttpSurrogateKnobTask(Task):
                 "surrogate_path_ref": str(self._surrogate_path.resolve()),
                 "knobs_json_path": str(self._knobs_path.resolve()),
                 "feature_order": list(names),
-                "problem_family": "http_surrogate_knob",
+                "problem_family": "dbtune_surrogate_service",
                 "http_evaluate_contract": "POST JSON {task_id, x} where x is [0,1]^d; response y",
                 **config.metadata,
             },
@@ -151,7 +152,7 @@ class HttpSurrogateKnobTask(Task):
             get_json(self._base_url, _HEALTH_PATH, timeout_sec=min(10.0, self._timeout_sec))
         except RuntimeError as exc:
             raise RuntimeError(
-                f"HTTP surrogate not reachable at {self._base_url!r} ({exc!s}). "
+                f"dbtune surrogate service not reachable at {self._base_url!r} ({exc!s}). "
                 f"Build/run ``bbo/tasks/dbtune/docker_surrogate/`` (Python 3.7) or set {_ENV_SURROGATE_BASE}."
             ) from exc
 
@@ -222,8 +223,12 @@ def create_http_surrogate_knob_task(
     )
 
 
+create_dbtune_surrogate_service_task = create_http_surrogate_knob_task
+
+
 __all__ = [
     "HttpSurrogateKnobTask",
     "HttpSurrogateKnobTaskConfig",
+    "create_dbtune_surrogate_service_task",
     "create_http_surrogate_knob_task",
 ]

@@ -1,4 +1,4 @@
-# Surrogate HTTP evaluator (Python 3.7)
+# Surrogate evaluator service (Python 3.7)
 
 Offline knob surrogates are sklearn models stored as `.joblib`. **Training and unpickling** are pinned to a Python 3.7 + compatible `numpy` / `scikit-learn` stack; the main AgentBBO code targets Python 3.11+. This image isolates that stack and exposes a small JSON API similar in spirit to `bbo/tasks/dbtune/docker_mariadb/` (MariaDB + sysbench), but for **in-memory prediction only**.
 
@@ -47,7 +47,7 @@ docker run -d --name agentbbo_surrogate_http -p 8090:8090 \
 
 ## Host-side (Python 3.11) tasks
 
-Run BBO with e.g. `--task knob_http_surrogate_sysbench_5` and set:
+Run BBO with e.g. the legacy task id `--task knob_http_surrogate_sysbench_5` and set:
 
 - `AGENTBBO_HTTP_SURROGATE_BASE_URL` (default `http://127.0.0.1:8090`)
 - `AGENTBBO_HTTP_SURROGATE_TIMEOUT_SEC` (default `120`)

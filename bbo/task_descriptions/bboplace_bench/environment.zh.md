@@ -1,6 +1,6 @@
 # 环境配置
 
-这个任务不是在本仓库里重建完整的上游 BBOPlace-Bench，而是通过一个已发布的 evaluator 镜像，以 HTTP API 的形式接入。
+这个任务不是在本仓库里重建完整的上游 BBOPlace-Bench，而是通过一个已发布的 evaluator 镜像，以外部服务的形式接入。
 当前本仓库引用的公开镜像是 Docker Hub 上的 `gaozhixuan/bboplace-bench`。
 
 ## 主机要求
@@ -49,4 +49,4 @@ uv run python -m bbo.run --algorithm random_search --task bboplace_bench --max-e
 ```
 
 如果环境正常，这个命令应当能够完成运行，不会出现连接错误或 JSON schema 错误，并在 `artifacts/` 下写出结果。
-如果你需要完整的上游工作流，比如重编译 DREAMPlace、下载 benchmark 数据集，或者运行 SP / HPO / GP-HPWL / PPA 流程，应参考官方 BBOPlace-Bench 仓库，而不是这个轻量级 HTTP wrapper。
+如果你需要完整的上游工作流，比如重编译 DREAMPlace、下载 benchmark 数据集，或者运行 SP / HPO / GP-HPWL / PPA 流程，应参考官方 BBOPlace-Bench 仓库，而不是这个轻量级 service wrapper。

@@ -17,6 +17,7 @@ if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
 from bbo.tasks.dbtune.http_mariadb_specs import (  # noqa: E402
+    DBTUNE_MARIADB_TASK_IDS,
     DATABASE_TASK_SPECS,
     HTTP_DATABASE_TASK_IDS,
     SYSBENCH_TEST_BY_WORKLOAD,
@@ -75,7 +76,7 @@ def _write_one(spec_id: str) -> None:
 
     background = f"""# Background
 
-`{spec.task_id}` is a **real** MariaDB benchmark in *AgentBBO*. The optimizer proposes a point in the unit hypercube; the **HTTP evaluator** (Flask inside the image built from `bbo/tasks/dbtune/docker_mariadb/`) writes `mysqld` knobs, restarts MariaDB, and runs **sysbench**, returning a scalar **throughput** score.
+`{spec.task_id}` is a **real** MariaDB benchmark in *AgentBBO*. The optimizer proposes a point in the unit hypercube; the packaged evaluator service (Flask inside the image built from `bbo/tasks/dbtune/docker_mariadb/`) writes `mysqld` knobs, restarts MariaDB, and runs **sysbench**, returning a scalar **throughput** score.
 
 This packaging combines: **{wl_en}** with **{knob_en}**
 
@@ -89,7 +90,7 @@ A Chinese companion is in `background.zh.md` (informational only; loaders use th
 
     background_zh = f"""# 背景
 
-`{spec.task_id}` 是 *AgentBBO* 中的 **真实 MariaDB** 黑盒调参：优化器给出 `[0,1]` 超立方体中的一点，Python 任务解码为 ``{knob_path}`` 中的物理旋钮，经 HTTP 发给评估容器；容器内写配置、重启、跑 **sysbench**，返回标量 TPS/吞吐类指标。
+`{spec.task_id}` 是 *AgentBBO* 中的 **真实 MariaDB** 黑盒调参：优化器给出 `[0,1]` 超立方体中的一点，Python 任务解码为 ``{knob_path}`` 中的物理旋钮，再发给评估容器服务；容器内写配置、重启、跑 **sysbench**，返回标量 TPS/吞吐类指标。
 
 本任务在口径上固定为：**{spec.short_label_zh}**
 
@@ -106,7 +107,7 @@ A Chinese companion is in `background.zh.md` (informational only; loaders use th
 
 - **Search space:** one float in `[0,1]` per exposed knob, decoded to physical values with the same rules as the surrogate `KnobSpaceFromJson` helper.
 - **One evaluation** = one successful `POST /evaluate` with `{{"knobs":{{...}},"workload":"{spec.workload_key}"}}` that runs **``{oltp}``** under the fixed `server.py` parameters.
-- **Valid run:** HTTP `status` is `success` and the returned objective is finite.
+- **Valid run:** evaluator `status` is `success` and the returned objective is finite.
 
 Comparative benchmarks should keep **image version, `server.py` timing, and hardware** fixed.
 """
@@ -114,7 +115,7 @@ Comparative benchmarks should keep **image version, `server.py` timing, and hard
 
     goal_zh = f"""# 目标
 
-**最大化**主目标 `throughput`（即 HTTP 返回的 TPS/吞吐，字段 `y` 或 `tps`）。
+**最大化**主目标 `throughput`（即评估服务返回的 TPS/吞吐，字段 `y` 或 `tps`）。
 
 - 搜索域：与 knob JSON 中每个键对应的一维 `[0,1]` 连续坐标，再解码到物理整型/枚举值。
 - 一次有效评估 = 一次成功的 `POST /evaluate`，`workload` 固定为 **``{spec.workload_key}``**，服务端映射到 **``{oltp}``**。
@@ -139,7 +140,7 @@ Comparative benchmarks should keep **image version, `server.py` timing, and hard
     constraints_zh = f"""# 约束
 
 - 同一评估器实例上**不要并发**发多个重评估；服务端已加锁，但仍建议工作流上串行化。
-- 单次评估时间可达数分钟，HTTP 客户端超时（默认 300s）可能不够，应按需调大。
+- 单次评估时间可达数分钟，客户端超时（默认 300s）可能不够，应按需调大。
 - 本 `task_id` 下 **sysbench 子命令固定为 ``{oltp}``**，搜索空间**不可**在运行时改 workload。
 - 旋钮表默认来自 {knob_path}；`bbo.run` 默认不暴露自定义 JSON 路径。
 - 本基准面向**实验/调参**环境，请勿连接生产库。
@@ -185,7 +186,7 @@ When reporting results, list **image digest / git commit**, this `task_id`, and 
 
     env_md = f"""# Environment
 
-## Shared Docker build (all eight database HTTP tasks)
+## Shared Docker build (all eight dbtune MariaDB/sysbench tasks)
 
 ```bash
 cd bbo/tasks/dbtune/docker_mariadb
@@ -217,9 +218,9 @@ Health check: `GET /health` on the same base URL.
 
 
 def main() -> None:
-    for tid in HTTP_DATABASE_TASK_IDS:
+    for tid in DBTUNE_MARIADB_TASK_IDS:
         _write_one(tid)
-    print("OK:", len(HTTP_DATABASE_TASK_IDS), "tasks ->", _TASK_DESC)
+    print("OK:", len(DBTUNE_MARIADB_TASK_IDS), "tasks ->", _TASK_DESC)
 
 
 if __name__ == "__main__":

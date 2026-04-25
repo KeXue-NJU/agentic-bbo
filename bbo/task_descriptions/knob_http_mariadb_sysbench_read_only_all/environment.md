@@ -1,6 +1,6 @@
 # Environment
 
-## Shared Docker build (all eight database HTTP tasks)
+## Shared Docker build (all eight dbtune MariaDB/sysbench tasks)
 
 ```bash
 cd bbo/tasks/dbtune/docker_mariadb

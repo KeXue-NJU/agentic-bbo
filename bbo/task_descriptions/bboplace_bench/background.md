@@ -3,7 +3,7 @@
 BBOPlace-Bench is a benchmark for black-box optimization on chip placement, a stage of VLSI design that strongly affects routing, timing, power, and area.
 The paper frames macro placement as an expensive black-box problem: a candidate placement is evaluated through placement tooling rather than a closed-form objective, and even proxy metrics can be costly on realistic designs.
 
-The task packaged in this repository wraps the benchmark's mask-guided optimization (MGO) formulation over an HTTP evaluator.
+The task packaged in this repository wraps the benchmark's mask-guided optimization (MGO) formulation behind a published evaluator service.
 In MGO, the optimizer proposes continuous macro coordinates on a 2D canvas, and the evaluator applies wire-mask-guided decoding to convert that proposal into a legal macro placement while trying to keep the incremental HPWL small.
 This makes the task a structured continuous black-box problem rather than a direct "place every macro exactly here" API.
 

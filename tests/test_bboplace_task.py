@@ -66,6 +66,16 @@ def test_bboplace_evaluate_invalid_response_shape() -> None:
 
 
 @pytest.mark.unit
+def test_bboplace_user_facing_metadata_avoids_http_benchmark_language() -> None:
+    from bbo.tasks.bboplace.task import default_bboplace_definition
+
+    task = BBOPlaceTask(config=BBOPlaceTaskConfig(), definition=default_bboplace_definition())
+
+    assert "HTTP" not in str(task.spec.metadata["display_name"])
+    assert "HTTP" not in task.definition.description
+
+
+@pytest.mark.unit
 def test_bboplace_evaluate_nonfinite_hpwl_is_failed() -> None:
     from bbo.tasks.bboplace.task import default_bboplace_definition
 
@@ -80,4 +90,3 @@ def test_bboplace_evaluate_nonfinite_hpwl_is_failed() -> None:
     assert not result.success
     assert result.status.value == "failed"
     assert result.error_type == "InvalidResponse"
-

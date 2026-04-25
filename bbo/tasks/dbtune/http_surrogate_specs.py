@@ -1,4 +1,4 @@
-"""Task id mapping: HTTP (host BBO) <-> canonical surrogate (Py3.7 Docker evaluator)."""
+"""Task id mapping for dbtune surrogate-service tasks and canonical surrogate ids."""
 
 from __future__ import annotations
 
@@ -43,8 +43,14 @@ def is_http_surrogate_task_id(task_id: str) -> bool:
 HTTP_SURROGATE_TASK_IDS: tuple[str, ...] = tuple(
     sorted(http_task_id_from_canonical(k) for k in SURROGATE_BENCHMARKS)
 )
+DBTUNE_SURROGATE_SERVICE_TASK_IDS: tuple[str, ...] = HTTP_SURROGATE_TASK_IDS
+
+
+def is_dbtune_surrogate_service_task_id(task_id: str) -> bool:
+    return is_http_surrogate_task_id(task_id)
 
 __all__ = [
+    "DBTUNE_SURROGATE_SERVICE_TASK_IDS",
     "HTTP_SURROGATE_TASK_IDS",
     "_DEFAULT_BASE_URL",
     "_DEFAULT_TIMEOUT",
@@ -52,5 +58,6 @@ __all__ = [
     "_ENV_SURROGATE_TIMEOUT",
     "canonical_id_from_http_task_id",
     "http_task_id_from_canonical",
+    "is_dbtune_surrogate_service_task_id",
     "is_http_surrogate_task_id",
 ]

@@ -2,7 +2,7 @@
 
 - Parameters: the task exposes 64 floating-point parameters by default for the `adaptec1` MGO instance with 32 macros: `x_0` ... `x_31`, followed by `y_0` ... `y_31`.
 - Semantics: these values are proposed macro coordinates, not guaranteed final legal positions. The evaluator decodes them into a placement before computing `hpwl`.
-- HTTP contract used by this repo:
+- Request contract used by this repo:
 
 ```json
 {

@@ -1,4 +1,4 @@
-"""Hook database HTTP tasks into ``bbo.tasks.registry`` / ``python -m bbo.run`` without editing ``run.py``."""
+"""Hook dbtune MariaDB tasks into ``bbo.tasks.registry`` / ``python -m bbo.run``."""
 
 from __future__ import annotations
 
@@ -6,16 +6,18 @@ from pathlib import Path
 from typing import Any
 
 from ...core import Task
-from .http_mariadb_specs import HTTP_DATABASE_TASK_IDS, is_database_task_id
-from .http_mariadb_task import create_http_database_task
+from .http_mariadb_specs import DBTUNE_MARIADB_TASK_IDS, is_database_task_id
+from .http_mariadb_task import create_dbtune_mariadb_task
 
-DATABASE_TASK_FAMILY = "database"
-DATABASE_TASK_NAMES: frozenset[str] = frozenset(HTTP_DATABASE_TASK_IDS)
+DBTUNE_MARIADB_TASK_FAMILY = "dbtune_mariadb"
+DBTUNE_MARIADB_TASK_NAMES: frozenset[str] = frozenset(DBTUNE_MARIADB_TASK_IDS)
+DATABASE_TASK_FAMILY = DBTUNE_MARIADB_TASK_FAMILY
+DATABASE_TASK_NAMES = DBTUNE_MARIADB_TASK_NAMES
 
 
 def database_registry_entries() -> dict[str, str]:
     """task_id -> family label for ``TASK_REGISTRY``."""
-    return {name: DATABASE_TASK_FAMILY for name in HTTP_DATABASE_TASK_IDS}
+    return {name: DBTUNE_MARIADB_TASK_FAMILY for name in DBTUNE_MARIADB_TASK_IDS}
 
 
 def create_database_task_for_registry(
@@ -27,17 +29,17 @@ def create_database_task_for_registry(
     **kwargs: Any,
 ) -> Task:
     """
-    Dispatch from ``create_demo_task`` / ``create_task`` when ``name`` is a database HTTP task.
+    Dispatch from ``create_demo_task`` / ``create_task`` when ``name`` is a dbtune MariaDB task.
 
     ``noise_std`` is ignored (synthetic-only). Optional ``kwargs`` may include
     ``knobs_json_path`` if callers pass it through ``create_task(**kwargs)``.
     """
     _ = noise_std
     if not is_database_task_id(name):
-        known = ", ".join(HTTP_DATABASE_TASK_IDS)
+        known = ", ".join(DBTUNE_MARIADB_TASK_IDS)
         raise ValueError(f"Unknown database task `{name}`. Known: {known}")
     knobs = kwargs.get("knobs_json_path")
-    return create_http_database_task(
+    return create_dbtune_mariadb_task(
         name,
         max_evaluations=max_evaluations,
         seed=seed,
@@ -49,6 +51,8 @@ def create_database_task_for_registry(
 
 
 __all__ = [
+    "DBTUNE_MARIADB_TASK_FAMILY",
+    "DBTUNE_MARIADB_TASK_NAMES",
     "DATABASE_TASK_FAMILY",
     "DATABASE_TASK_NAMES",
     "create_database_task_for_registry",

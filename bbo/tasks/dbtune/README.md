@@ -8,12 +8,12 @@ clear subfolders.
 
 | Area | Role |
 |------|------|
-| `registry.py` | Re-exports catalog metadata for offline surrogates, MariaDB task specs, and HTTP-surrogate id maps. |
+| `registry.py` | Re-exports catalog metadata for offline surrogates, MariaDB task specs, and surrogate-service id maps. |
 | `catalog.py` | Offline `*.joblib` benchmark specs (`SURROGATE_BENCHMARKS`). |
-| `http_mariadb_specs.py` | Eight real **MariaDB + sysbench** HTTP tasks (`HTTP_DATABASE_TASK_IDS`). |
+| `http_mariadb_specs.py` | Eight real **MariaDB + sysbench** dbtune tasks (`DBTUNE_MARIADB_TASK_IDS`). |
 | `http_mariadb_task.py` | Task implementation: `HttpDatabaseKnobTask`. |
 | `offline_surrogate_task.py` | In-process sklearn surrogate: `SurrogateKnobTask`. |
-| `http_surrogate_task.py` | Remote evaluator over HTTP (Python 3.7 Docker) for the same surrogates. |
+| `http_surrogate_task.py` | Remote evaluator service (Python 3.7 Docker) for the same surrogates. |
 | `cli_*.py` | Hooks for `bbo.tasks.registry` / `python -m bbo.run` (no changes to `bbo.run` needed for new task ids). |
 | `assets/` | Shared `knobs_*.json` and downloaded `*.joblib` (large files are not committed; see `assets/README.md`). |
 | `docker_mariadb/` | Image for the **live** MariaDB + sysbench evaluator (Flask API). |
@@ -27,7 +27,7 @@ User code typically uses the stable exports from `bbo.tasks` / `bbo.tasks.regist
 **direct** import, prefer:
 
 ```python
-from bbo.tasks.dbtune import create_surrogate_knob_task, create_http_database_task
+from bbo.tasks.dbtune import create_dbtune_mariadb_task, create_surrogate_knob_task
 ```
 
 ## See also

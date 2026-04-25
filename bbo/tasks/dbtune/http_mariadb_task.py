@@ -1,4 +1,4 @@
-"""BBO task: evaluate knobs via HTTP Docker evaluator (MariaDB + sysbench)."""
+"""BBO task: evaluate dbtune MariaDB knobs via the packaged evaluator service."""
 
 from __future__ import annotations
 
@@ -25,6 +25,7 @@ from ...core import (
 from ..http_json import get_json, post_json
 from .knob_encode import build_knob_space, feature_order_by_rank, physical_to_mariadb_strings
 from .http_mariadb_specs import (
+    DBTUNE_MARIADB_TASK_IDS,
     HTTP_DATABASE_TASK_IDS,
     HttpDatabaseTaskSpec,
     by_task_id,
@@ -61,7 +62,7 @@ def _resolve_timeout_sec(config_timeout: float | None) -> float:
 
 @dataclass(frozen=True)
 class HttpDatabaseKnobTaskConfig:
-    """Configuration for one HTTP database evaluator task."""
+    """Configuration for one dbtune MariaDB evaluator task."""
 
     task_id: str
     base_url: str | None = None
@@ -79,7 +80,7 @@ class HttpDatabaseKnobTaskConfig:
 
 class HttpDatabaseKnobTask(Task):
     """
-    Normalized ``[0,1]^d`` knobs -> decode -> HTTP ``POST /evaluate`` -> TPS (maximize).
+    Normalized ``[0,1]^d`` knobs -> decode -> evaluator ``POST /evaluate`` -> TPS (maximize).
 
     Requires a running container built from ``bbo/tasks/dbtune/docker_mariadb/`` (evaluator
     must accept ``workload`` in the JSON body; see ``server.py`` in that directory).
@@ -89,7 +90,7 @@ class HttpDatabaseKnobTask(Task):
         self.config = config
         if not is_database_task_id(config.task_id):
             raise ValueError(
-                f"Unknown HTTP database task_id `{config.task_id}`. Known: {', '.join(HTTP_DATABASE_TASK_IDS)}"
+                f"Unknown dbtune MariaDB task_id `{config.task_id}`. Known: {', '.join(DBTUNE_MARIADB_TASK_IDS)}"
             )
 
         self._task_spec: HttpDatabaseTaskSpec = by_task_id(config.task_id)
@@ -126,7 +127,7 @@ class HttpDatabaseKnobTask(Task):
                 "evaluate_path": config.evaluate_path,
                 "workload": self._task_spec.workload_key,
                 "feature_order": list(self._feature_names),
-                "problem_family": "http_database_mariadb",
+                "problem_family": "dbtune_mariadb",
                 **config.metadata,
             },
         )
@@ -143,7 +144,7 @@ class HttpDatabaseKnobTask(Task):
             get_json(self._base_url, health_path, timeout_sec=min(10.0, self._timeout_sec))
         except RuntimeError as exc:
             raise RuntimeError(
-                f"HTTP evaluator not reachable at {self._base_url!r} ({exc}). "
+                f"dbtune MariaDB evaluator service not reachable at {self._base_url!r} ({exc}). "
                 f"Start the Docker image from bbo/tasks/dbtune/docker_mariadb/ or set {_ENV_BASE_URL}."
             ) from exc
 
@@ -224,6 +225,9 @@ def create_http_database_task(
     )
 
 
+create_dbtune_mariadb_task = create_http_database_task
+
+
 # Backward-compatible name for the previous single-task entry point
 def create_http_database_sysbench5_task(
     *,
@@ -247,9 +251,11 @@ def create_http_database_sysbench5_task(
 
 
 __all__ = [
+    "DBTUNE_MARIADB_TASK_IDS",
     "HTTP_DATABASE_TASK_IDS",
     "HttpDatabaseKnobTask",
     "HttpDatabaseKnobTaskConfig",
+    "create_dbtune_mariadb_task",
     "create_http_database_sysbench5_task",
     "create_http_database_task",
     "is_database_task_id",
