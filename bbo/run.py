@@ -137,6 +137,7 @@ def run_single_experiment(
     algorithm_name: str,
     seed: int,
     max_evaluations: int | None = None,
+    task_kwargs: dict[str, Any] | None = None,
     results_root: Path = DEFAULT_RESULTS_ROOT,
     resume: bool = False,
     sigma_fraction: float = 0.18,
@@ -196,6 +197,7 @@ def run_single_experiment(
         noise_std=noise_std,
         surrogate_path=surrogate_path,
         knobs_json_path=knobs_json_path,
+        **dict(task_kwargs or {}),
     )
     _require_algorithm_support(task, algorithm_name)
     run_dir = _allocate_run_dir(results_root / task_name / algorithm_name / f"seed_{seed}", resume=resume)
