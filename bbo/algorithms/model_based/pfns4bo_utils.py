@@ -22,6 +22,7 @@ from ...core import FloatParam, IntParam, ObjectiveDirection, SearchSpace, Trial
 DEFAULT_PFNS_MODEL = "hebo_plus"
 DEFAULT_PFNS_POOL_SIZE = 256
 DEFAULT_FAILURE_PENALTY = 1e12
+DEFAULT_PFNS_ACQUISITION = "ei"
 
 PFNS_MODEL_ATTRS = {
     "hebo_plus": "hebo_plus_model",
@@ -73,6 +74,26 @@ def require_torch() -> Any:
             "`pfns4bo` requires PyTorch. Install it with `uv sync --extra dev --extra pfns4bo`."
         ) from exc
     return torch
+
+
+def require_pandas() -> Any:
+    try:
+        import pandas
+    except ImportError as exc:  # pragma: no cover - depends on optional extra.
+        raise ImportError(
+            "This PFN variant requires pandas. Install it with `uv sync --extra dev --extra tabpfn`."
+        ) from exc
+    return pandas
+
+
+def require_tabpfn() -> Any:
+    try:
+        import tabpfn
+    except ImportError as exc:  # pragma: no cover - depends on optional extra.
+        raise ImportError(
+            "This PFN variant requires TabPFN. Install it with `uv sync --extra dev --extra tabpfn`."
+        ) from exc
+    return tabpfn
 
 
 def patch_pfns_torch_compat() -> None:
@@ -132,6 +153,14 @@ def select_pfns_device(requested: str | None) -> str:
     if requested.startswith("cuda") and not torch.cuda.is_available():
         raise RuntimeError(f"Requested PFNs device `{requested}` but CUDA is not available.")
     return requested
+
+
+def normalize_torch_device_label(device: str) -> str:
+    """Collapse torch device strings into a form accepted by downstream libraries."""
+
+    if device.startswith("cpu"):
+        return "cpu"
+    return device
 
 
 def resolve_pfns_model(model_name: str) -> PfnsModelInfo:
@@ -204,6 +233,7 @@ def load_torch_model(model_path: Path) -> Any:
     """Load one serialized PFNs model onto CPU."""
 
     torch = require_torch()
+    patch_pfns_torch_compat()
     model = torch.load(str(model_path), map_location="cpu", weights_only=False)
     model.eval()
     return model
@@ -591,6 +621,7 @@ class ContinuousPfnsOptimizer:
 
 __all__ = [
     "ContinuousPfnsOptimizer",
+    "DEFAULT_PFNS_ACQUISITION",
     "DEFAULT_FAILURE_PENALTY",
     "DEFAULT_PFNS_MODEL",
     "DEFAULT_PFNS_POOL_SIZE",
@@ -604,9 +635,12 @@ __all__ = [
     "load_torch_model",
     "model_feature_capacity",
     "normalize_pool_utilities",
+    "normalize_torch_device_label",
     "observation_to_continuous_value",
     "patch_pfns_torch_compat",
+    "require_pandas",
     "require_pfns4bo",
+    "require_tabpfn",
     "require_torch",
     "resolve_pfns_model",
     "select_pfns_device",

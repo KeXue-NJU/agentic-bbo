@@ -6,8 +6,9 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 from ..core.algo import Algorithm
-from .agentic import PabloAlgorithm
-from .model_based import OptunaTpeAlgorithm, Pfns4BoAlgorithm
+from .agentic import ClaudeCodeBboAlgorithm, NanobotBboAlgorithm, PabloAlgorithm
+from .llm_based import LlamboAlgorithm, OproAlgorithm
+from .model_based import CustomPfnsBoAlgorithm, OptunaTpeAlgorithm, Pfns4BoAlgorithm, TabPfnV2BoAlgorithm
 from .traditional import PyCmaAlgorithm, RandomSearchAlgorithm
 
 
@@ -19,6 +20,7 @@ class AlgorithmSpec:
     description: str
     family: str
     numeric_only: bool = False
+    categorical_to_continuous: str | None = None
 
 
 ALGORITHM_REGISTRY: dict[str, AlgorithmSpec] = {
@@ -37,12 +39,14 @@ ALGORITHM_REGISTRY: dict[str, AlgorithmSpec] = {
         description="CMA-ES via the external `pycma` package.",
         family="traditional",
         numeric_only=True,
+        categorical_to_continuous="onehot",
     ),
     "cma_es": AlgorithmSpec(
         factory=PyCmaAlgorithm,
         description="Alias for pycma.",
         family="traditional",
         numeric_only=True,
+        categorical_to_continuous="onehot",
     ),
     "optuna_tpe": AlgorithmSpec(
         factory=OptunaTpeAlgorithm,
@@ -53,6 +57,28 @@ ALGORITHM_REGISTRY: dict[str, AlgorithmSpec] = {
         factory=Pfns4BoAlgorithm,
         description="PFNs4BO with fixed continuous/pool routing for benchmark smoke tasks.",
         family="model_based",
+        categorical_to_continuous="onehot",
+    ),
+    "pfns4bo_tabpfn_v2": AlgorithmSpec(
+        factory=TabPfnV2BoAlgorithm,
+        description="TabPFN v2 surrogate over a deterministic candidate pool for arbitrary-dimensional BO tasks.",
+        family="model_based",
+    ),
+    "pfns4bo_custom": AlgorithmSpec(
+        factory=CustomPfnsBoAlgorithm,
+        description="Custom-trained PFN surrogate over a deterministic candidate pool for arbitrary-dimensional BO tasks.",
+        family="model_based",
+        categorical_to_continuous="onehot",
+    ),
+    "llambo": AlgorithmSpec(
+        factory=LlamboAlgorithm,
+        description="LLAMBO-style prompt optimizer with pluggable chat backends and an offline heuristic mode.",
+        family="llm_based",
+    ),
+    "opro": AlgorithmSpec(
+        factory=OproAlgorithm,
+        description="OPRO-style prompt optimizer over prior configuration/objective pairs.",
+        family="llm_based",
     ),
     "pablo": AlgorithmSpec(
         factory=PabloAlgorithm,
@@ -62,6 +88,31 @@ ALGORITHM_REGISTRY: dict[str, AlgorithmSpec] = {
     "palbo": AlgorithmSpec(
         factory=PabloAlgorithm,
         description="Alias for pablo.",
+        family="agentic",
+    ),
+    "agentic_nanobot": AlgorithmSpec(
+        factory=NanobotBboAlgorithm,
+        description="General-agent BBO optimizer backed by the Nanobot CLI agent.",
+        family="agentic",
+    ),
+    "nanobot": AlgorithmSpec(
+        factory=NanobotBboAlgorithm,
+        description="Alias for agentic_nanobot.",
+        family="agentic",
+    ),
+    "agentic_claude_code": AlgorithmSpec(
+        factory=ClaudeCodeBboAlgorithm,
+        description="General-agent BBO optimizer backed by Claude Code.",
+        family="agentic",
+    ),
+    "claude_code": AlgorithmSpec(
+        factory=ClaudeCodeBboAlgorithm,
+        description="Alias for agentic_claude_code.",
+        family="agentic",
+    ),
+    "claude-code": AlgorithmSpec(
+        factory=ClaudeCodeBboAlgorithm,
+        description="Alias for agentic_claude_code.",
         family="agentic",
     ),
 }

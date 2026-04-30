@@ -54,8 +54,11 @@ Reusable benchmark abstractions:
 ### `bbo/algorithms/`
 
 Algorithm implementations are grouped by family.
-Current family:
+Current families:
 
+- `bbo/algorithms/agentic/`
+  - `llambo.py`
+  - `opro.py`
 - `bbo/algorithms/model_based/`
   - `optuna_tpe.py`
 - `bbo/algorithms/traditional/`
@@ -64,20 +67,19 @@ Current family:
 
 ### `bbo/tasks/`
 
-Task implementations are also grouped by family.
-Current family:
+Task implementations are grouped by family (see also `bbo/tasks/scientific/` and `bbo/tasks/dbtune/README.md`).
 
-- `bbo/tasks/synthetic/`
-  - `branin.py`
-  - `sphere.py`
-  - `base.py`
+- `bbo/tasks/synthetic/` — toy synthetic objectives (`branin.py`, `sphere.py`, `base.py`)
+- `bbo/tasks/bboplace/` — HTTP-backed BBOPlace benchmark task (`task.py`)
+- `bbo/tasks/scientific/` — tabular / scientific BO tutorial tasks (`registry.py` + per-task modules, `data/` assets)
+- `bbo/tasks/dbtune/` — database knob tuning: offline sklearn surrogates, HTTP MariaDB/sysbench evaluators, optional HTTP surrogate servers (`assets/`, `registry.py`, `docker_mariadb/`, `docker_surrogate/`)
 
 ### `bbo/task_descriptions/`
 
 Standardized task packaging for benchmark context.
 The current repository includes:
 
-- runnable benchmark descriptions for `branin_demo` and `sphere_demo`
+- runnable benchmark descriptions for `branin_demo`, `sphere_demo`, and `bboplace_bench`
 - a collaborator-facing packaging example
 - a reusable template
 - bilingual documentation companions
@@ -140,6 +142,18 @@ uv run python examples/run_pycma_demo.py
 uv run python examples/run_optuna_tpe_demo.py
 ```
 
+### LLAMBO baseline
+
+```bash
+uv run python examples/run_llambo_demo.py
+```
+
+### OPRO baseline
+
+```bash
+uv run python examples/run_opro_demo.py
+```
+
 ### Direct CLI example
 
 ```bash
@@ -149,6 +163,21 @@ uv run python -m bbo.run \
   --max-evaluations 36 \
   --sigma-fraction 0.18 \
   --popsize 6
+```
+
+### BBOPlace HTTP task
+
+Start the published evaluator service first:
+
+```bash
+docker pull gaozhixuan/bboplace-bench
+docker run --rm -p 8080:8080 gaozhixuan/bboplace-bench
+```
+
+Then run a quick smoke test from this repo:
+
+```bash
+uv run python -m bbo.run --algorithm random_search --task bboplace_bench --max-evaluations 1
 ```
 
 Optuna TPE uses the public algorithm name `optuna_tpe` and supports mixed/categorical search spaces:
@@ -162,17 +191,84 @@ uv run python -m bbo.run \
 
 `suite` remains a traditional-only comparison between `random_search` and `pycma`; it does not include `optuna_tpe`.
 
+LLAMBO uses the public algorithm name `llambo`. The default `heuristic` backend is an offline smoke-test path that preserves the LLAMBO acquisition/surrogate loop without requiring network access:
+
+```bash
+uv run python -m bbo.run \
+  --algorithm llambo \
+  --task branin_demo \
+  --max-evaluations 12 \
+  --llambo-backend heuristic
+```
+
+For the online OpenAI path, keep credentials and endpoint selection at the user-facing runner layer instead of hard-coding them inside the low-level algorithm. Set the API key in an environment variable and configure model/base-url/timeout through the CLI:
+
+```bash
+export OPENAI_API_KEY=your_key_here
+uv run python -m bbo.run \
+  --algorithm llambo \
+  --task branin_demo \
+  --max-evaluations 12 \
+  --llambo-backend openai \
+  --llambo-model gpt-4o-mini \
+  --llambo-openai-api-key-env OPENAI_API_KEY \
+  --llambo-openai-timeout-seconds 30
+```
+
+Optional endpoint overrides such as `--llambo-openai-base-url`, `--llambo-openai-organization`, and `--llambo-openai-project` are also configured at the runner layer.
+
+Additional tuning flags:
+- `--llambo-openai-max-retries` (default 3) – retry transient network errors with exponential backoff.
+- `--no-llambo-openai-use-structured-outputs` – disable ``json_schema`` structured outputs for endpoints that do not support them; the backend will fall back to plain text completion + parsing.
+
+A ready-made demo script for the online backend is provided at `examples/run_llambo_openai_demo.py`.
+
+OPRO uses the public algorithm name `opro`. The default `heuristic` backend is an offline smoke-test path that adapts the original OPRO config/value meta-prompt pattern to repository-native search spaces:
+
+```bash
+uv run python -m bbo.run \
+  --algorithm opro \
+  --task branin_demo \
+  --max-evaluations 12 \
+  --opro-backend heuristic
+```
+
+For the online OpenAI path, credentials and endpoint selection follow the same runner-layer pattern as LLAMBO:
+
+```bash
+export OPENAI_API_KEY=your_key_here
+uv run python -m bbo.run \
+  --algorithm opro \
+  --task branin_demo \
+  --max-evaluations 12 \
+  --opro-backend openai \
+  --opro-model gpt-4o-mini \
+  --opro-openai-api-key-env OPENAI_API_KEY \
+  --opro-openai-timeout-seconds 30
+```
+
+Optional endpoint overrides such as `--opro-openai-base-url`, `--opro-openai-organization`, and `--opro-openai-project` are also configured at the runner layer.
+
+Additional tuning flags:
+- `--opro-openai-max-retries` (default 3) – retry transient network errors with exponential backoff.
+
+A ready-made demo script for the online backend is provided at `examples/run_opro_openai_demo.py`.
+
 ## Outputs
 
-Runs write JSONL histories, summaries, and plots under `artifacts/`.
-A validated reference run is available under `artifacts/final_demo_v3/`.
+`python -m bbo.run` writes under `runs/demo/` (or `--results-root`): `trials.jsonl`, `summary.json`, and a `plots/` folder when plotting is enabled (default). Use `--no-plots` to skip PNG generation. `summary.json` includes `plot_paths` listing every generated figure.
 
-Generated visualization artifacts currently include:
+Legacy reference bundles may still live under `artifacts/` (e.g. `artifacts/final_demo_v3/`).
 
-- optimization trace plots
-- objective distribution plots
-- 2D landscape overlays for visualizable tasks
-- optimizer comparison plots
+Per single-algorithm run, `plots/` typically includes **one file per metric**, for example:
+
+- `trace.png` — objective over evaluations + incumbent curve
+- `distribution.png` — histogram of observed objectives
+- `per_trial_eval_time.png` / `cumulative_eval_time.png` — evaluation wall time
+- `regret.png` — only when the task exports `known_optimum` in metadata (e.g. some synthetic tasks)
+- `landscape.png` — only for 2D synthetic tasks with a surface
+
+For `suite` (random_search vs pycma), see also `.../suite/seed_*/plots/`: `comparison.png` (running-best curves), `comparison_cumulative_eval_time.png`, `bar_best_primary_objective.png`, `bar_total_eval_time.png`, plus each algorithm’s own `plots/` under its sub-run directory.
 
 ## Task-description standard
 
@@ -237,10 +333,12 @@ uv run python -m bbo.run --algorithm optuna_tpe --task branin_demo --max-evaluat
 uv run python -m bbo.run --algorithm optuna_tpe --task her_demo --max-evaluations 6 --results-root artifacts/optuna_tpe_smoke
 uv run python -m bbo.run --algorithm optuna_tpe --task oer_demo --max-evaluations 6 --results-root artifacts/optuna_tpe_smoke
 uv run python -m bbo.run --algorithm optuna_tpe --task molecule_qed_demo --max-evaluations 6 --results-root artifacts/optuna_tpe_smoke
+uv run python -m bbo.run --algorithm opro --task branin_demo --max-evaluations 6 --results-root artifacts/opro_smoke
 ```
 
 ## Current reference benchmarks
 
 - `branin_demo`: two-dimensional synthetic benchmark for visualization and optimizer comparisons
 - `sphere_demo`: convex synthetic benchmark for smoke tests and replay/resume validation
+- `bboplace_bench`: HTTP-backed macro-placement benchmark adapter for BBOPlace-Bench MGO evaluation
 - `collaborator_problem_demo`: documentation-focused example showing how to package a realistic benchmark problem
