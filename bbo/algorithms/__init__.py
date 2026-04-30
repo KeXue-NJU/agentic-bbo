@@ -11,7 +11,7 @@ from .llm_based import (
     OproAlgorithm,
     OproBackend,
 )
-from .model_based import OptunaTpeAlgorithm, Pfns4BoAlgorithm
+from .model_based import CustomPfnsBoAlgorithm, OptunaTpeAlgorithm, Pfns4BoAlgorithm, TabPfnV2BoAlgorithm
 from .registry import ALGORITHM_REGISTRY, AlgorithmSpec, algorithms_by_family, create_algorithm
 from .traditional import PyCmaAlgorithm, RandomSearchAlgorithm
 
@@ -19,6 +19,7 @@ __all__ = [
     "ALGORITHM_REGISTRY",
     "AlgorithmSpec",
     "ClaudeCodeBboAlgorithm",
+    "CustomPfnsBoAlgorithm",
     "GeneralAgentBboAlgorithm",
     "HeuristicLlamboBackend",
     "HeuristicOproBackend",
@@ -34,6 +35,7 @@ __all__ = [
     "Pfns4BoAlgorithm",
     "PyCmaAlgorithm",
     "RandomSearchAlgorithm",
+    "TabPfnV2BoAlgorithm",
     "algorithms_by_family",
     "create_algorithm",
 ]

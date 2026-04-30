@@ -8,7 +8,7 @@ from typing import Any, Callable
 from ..core.algo import Algorithm
 from .agentic import ClaudeCodeBboAlgorithm, NanobotBboAlgorithm, PabloAlgorithm
 from .llm_based import LlamboAlgorithm, OproAlgorithm
-from .model_based import OptunaTpeAlgorithm, Pfns4BoAlgorithm
+from .model_based import CustomPfnsBoAlgorithm, OptunaTpeAlgorithm, Pfns4BoAlgorithm, TabPfnV2BoAlgorithm
 from .traditional import PyCmaAlgorithm, RandomSearchAlgorithm
 
 
@@ -56,6 +56,17 @@ ALGORITHM_REGISTRY: dict[str, AlgorithmSpec] = {
     "pfns4bo": AlgorithmSpec(
         factory=Pfns4BoAlgorithm,
         description="PFNs4BO with fixed continuous/pool routing for benchmark smoke tasks.",
+        family="model_based",
+        categorical_to_continuous="onehot",
+    ),
+    "pfns4bo_tabpfn_v2": AlgorithmSpec(
+        factory=TabPfnV2BoAlgorithm,
+        description="TabPFN v2 surrogate over a deterministic candidate pool for arbitrary-dimensional BO tasks.",
+        family="model_based",
+    ),
+    "pfns4bo_custom": AlgorithmSpec(
+        factory=CustomPfnsBoAlgorithm,
+        description="Custom-trained PFN surrogate over a deterministic candidate pool for arbitrary-dimensional BO tasks.",
         family="model_based",
         categorical_to_continuous="onehot",
     ),

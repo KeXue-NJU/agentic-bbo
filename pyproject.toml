@@ -12,7 +12,7 @@ authors = [{ name = "OpenAI Codex" }]
 dependencies = [
   "cma>=4.0.0",
   "matplotlib>=3.9.0",
-  "numpy>=2.2.0",
+  "numpy>=1.26,<3",
 ]
 
 [project.optional-dependencies]
@@ -44,12 +44,17 @@ bo-tutorial-full = [
   "torch>=1.9.0",
 ]
 pfns4bo = [
-  "botorch",
-  "gpytorch>=1.4.0",
-  "pfns4bo",
-  "scikit-learn>=0.22",
+  "botorch==0.7.2",
+  "gpytorch==1.9.0",
+  "numpy<2",
+  "pfns4bo==0.1.5",
+  "scikit-learn>=0.24.2,<1.2",
   "scipy>=1.1",
   "torch>=1.9.0",
+]
+tabpfn = [
+  "pandas>=2.2.0",
+  "tabpfn>=6.0.0",
 ]
 pablo = [
   "openai>=1.0",
@@ -78,10 +83,15 @@ conflicts = [
     { extra = "surrogate" },
     { extra = "pfns4bo" },
   ],
+  [
+    { extra = "pfns4bo" },
+    { extra = "tabpfn" },
+  ],
 ]
 
 [project.scripts]
 bbo-demo = "bbo.run:main"
+bbo-train-pfn = "bbo.algorithms.model_based.pfns4bo_training:main"
 
 [tool.setuptools]
 include-package-data = true

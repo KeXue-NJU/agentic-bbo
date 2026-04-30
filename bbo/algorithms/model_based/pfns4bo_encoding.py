@@ -1,4 +1,4 @@
-"""Fixed input encoders for PFNs4BO pool-based tasks."""
+"""Candidate-pool encoders for PFNs4BO-style surrogate backends."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from typing import Any
 
 import numpy as np
 
-from ...core import CategoricalParam, SearchSpace, TaskSpec
+from ...core import CategoricalParam, FloatParam, IntParam, SearchSpace, TaskSpec
 from ...tasks.scientific.molecule import MOLECULE_TASK_NAME
 from ...tasks.scientific.oer import (
     OER_CATEGORICAL_FEATURES,
@@ -51,7 +51,107 @@ def build_pool_candidates(task_spec: TaskSpec, *, seed: int, pool_size: int) -> 
         return build_oer_candidate_pool(task_spec.search_space, seed=seed, pool_size=pool_size)
     if task_spec.name == MOLECULE_TASK_NAME:
         return build_molecule_candidate_pool(task_spec.search_space, seed=seed, pool_size=pool_size)
-    raise ValueError(f"Task `{task_spec.name}` does not have a fixed PFNs4BO pool-based encoder.")
+    return build_generic_candidate_pool(task_spec.search_space, seed=seed, pool_size=pool_size, task_name=task_spec.name)
+
+
+def generic_feature_names(search_space: SearchSpace) -> tuple[str, ...]:
+    names: list[str] = []
+    for param in search_space:
+        if isinstance(param, (FloatParam, IntParam)):
+            names.append(param.name)
+            continue
+        if not isinstance(param, CategoricalParam):
+            raise TypeError(
+                f"Generic PFNs candidate encoding does not support `{type(param).__name__}` for `{param.name}`."
+            )
+        names.extend(f"{param.name}::{choice}" for choice in param.choices)
+    return tuple(names)
+
+
+def _normalize_numeric_value(value: float, *, low: float, high: float, log: bool) -> float:
+    if log:
+        low = float(np.log(low))
+        high = float(np.log(high))
+        value = float(np.log(value))
+    span = high - low
+    if abs(span) <= 1e-12:
+        return 0.5
+    return float((value - low) / span)
+
+
+def encode_generic_config(config: dict[str, Any], search_space: SearchSpace) -> np.ndarray:
+    """Encode one arbitrary benchmark config into a [0, 1] feature vector."""
+
+    normalized = search_space.coerce_config(config, use_defaults=False)
+    values: list[float] = []
+    for param in search_space:
+        raw_value = normalized[param.name]
+        if isinstance(param, FloatParam):
+            values.append(
+                _normalize_numeric_value(
+                    float(raw_value),
+                    low=float(param.low),
+                    high=float(param.high),
+                    log=bool(param.log),
+                )
+            )
+            continue
+        if isinstance(param, IntParam):
+            values.append(
+                _normalize_numeric_value(
+                    float(raw_value),
+                    low=float(param.low),
+                    high=float(param.high),
+                    log=bool(param.log),
+                )
+            )
+            continue
+        if not isinstance(param, CategoricalParam):
+            raise TypeError(
+                f"Generic PFNs candidate encoding does not support `{type(param).__name__}` for `{param.name}`."
+            )
+        values.extend(1.0 if raw_value == choice else 0.0 for choice in param.choices)
+    return np.asarray(values, dtype=float)
+
+
+def build_generic_candidate_pool(
+    search_space: SearchSpace,
+    *,
+    seed: int,
+    pool_size: int,
+    task_name: str = "generic",
+) -> EncodedCandidatePool:
+    """Sample a deterministic generic candidate pool with normalized one-hot features."""
+
+    rng = random.Random(seed)
+    configs: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    attempts = 0
+    max_attempts = max(pool_size * 50, 1024)
+    while len(configs) < pool_size and attempts < max_attempts:
+        attempts += 1
+        candidate = search_space.sample(rng)
+        candidate = search_space.coerce_config(candidate, use_defaults=False)
+        identity = config_identity(candidate)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        configs.append(candidate)
+
+    if not configs:
+        raise RuntimeError(f"Failed to sample any PFNs candidate-pool configs for task `{task_name}`.")
+
+    feature_names = generic_feature_names(search_space)
+    features = np.asarray([encode_generic_config(config, search_space) for config in configs], dtype=float)
+    metadata = tuple({"config_identity": config_identity(config)} for config in configs)
+    return EncodedCandidatePool(
+        task_name=task_name,
+        configs=tuple(configs),
+        features=features,
+        feature_names=feature_names,
+        candidate_metadata=metadata,
+        full_candidate_count=len(configs),
+    )
 
 
 def oer_feature_names(search_space: SearchSpace) -> tuple[str, ...]:
@@ -226,10 +326,13 @@ def build_molecule_candidate_pool(search_space: SearchSpace, *, seed: int, pool_
 __all__ = [
     "EncodedCandidatePool",
     "MOLECULE_DESCRIPTOR_NAMES",
+    "build_generic_candidate_pool",
     "build_molecule_candidate_pool",
     "build_oer_candidate_pool",
     "build_pool_candidates",
     "compute_molecule_descriptor_dataset",
+    "encode_generic_config",
     "encode_oer_config",
+    "generic_feature_names",
     "oer_feature_names",
 ]

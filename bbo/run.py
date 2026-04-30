@@ -149,6 +149,11 @@ def run_single_experiment(
     pfns_device: str | None = None,
     pfns_pool_size: int = 256,
     pfns_model: str = "hebo_plus",
+    pfns_acquisition: str = "ei",
+    pfns_custom_model_path: str | Path | None = None,
+    pfns_tabpfn_n_estimators: int = 8,
+    pfns_tabpfn_ignore_pretraining_limits: bool = True,
+    pfns_tabpfn_fit_mode: str = "fit_preprocessors",
     pablo_provider: str = "mock",
     pablo_base_url: str | None = None,
     pablo_api_key_env: str = "PABLO_API_KEY",
@@ -223,6 +228,22 @@ def run_single_experiment(
             "device": pfns_device,
             "pool_size": pfns_pool_size,
             "model_name": pfns_model,
+        }
+    elif algorithm_name == "pfns4bo_tabpfn_v2":
+        algorithm_kwargs = {
+            "device": pfns_device,
+            "pool_size": pfns_pool_size,
+            "acquisition": pfns_acquisition,
+            "n_estimators": pfns_tabpfn_n_estimators,
+            "ignore_pretraining_limits": pfns_tabpfn_ignore_pretraining_limits,
+            "fit_mode": pfns_tabpfn_fit_mode,
+        }
+    elif algorithm_name == "pfns4bo_custom":
+        algorithm_kwargs = {
+            "device": pfns_device,
+            "pool_size": pfns_pool_size,
+            "acquisition": pfns_acquisition,
+            "model_path": pfns_custom_model_path,
         }
     elif algorithm_name in {"pablo", "palbo"}:
         algorithm_kwargs = {
@@ -596,6 +617,15 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--pfns-device", default=None)
     parser.add_argument("--pfns-pool-size", type=int, default=256)
     parser.add_argument("--pfns-model", default="hebo_plus")
+    parser.add_argument("--pfns-acquisition", choices=("ei", "ucb", "mean"), default="ei")
+    parser.add_argument("--pfns-custom-model-path", default=None)
+    parser.add_argument("--pfns-tabpfn-n-estimators", type=int, default=8)
+    parser.add_argument("--pfns-tabpfn-fit-mode", default="fit_preprocessors")
+    parser.add_argument(
+        "--pfns-tabpfn-ignore-pretraining-limits",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
     parser.add_argument("--pablo-provider", default="mock", choices=["mock", "openai-compatible"])
     parser.add_argument("--pablo-base-url", default=None)
     parser.add_argument("--pablo-api-key-env", default="PABLO_API_KEY")
@@ -693,6 +723,11 @@ def main(argv: list[str] | None = None) -> int:
             pfns_device=args.pfns_device,
             pfns_pool_size=args.pfns_pool_size,
             pfns_model=args.pfns_model,
+            pfns_acquisition=args.pfns_acquisition,
+            pfns_custom_model_path=args.pfns_custom_model_path,
+            pfns_tabpfn_n_estimators=args.pfns_tabpfn_n_estimators,
+            pfns_tabpfn_ignore_pretraining_limits=args.pfns_tabpfn_ignore_pretraining_limits,
+            pfns_tabpfn_fit_mode=args.pfns_tabpfn_fit_mode,
             pablo_provider=args.pablo_provider,
             pablo_base_url=args.pablo_base_url,
             pablo_api_key_env=args.pablo_api_key_env,
