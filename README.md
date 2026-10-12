@@ -1,6 +1,42 @@
-# Agentic BBO Bench
+<div align="center">
 
-Agentic BBO Bench is a Python benchmark for black-box optimization with language-model agents and numerical optimizers. It provides 77 tasks across five domains, shared initial evaluations, a host-controlled evaluation budget, isolated agent workspaces, append-only run logs, and a common scoring implementation. The benchmark accompanies *A Closer Look at Agentic BBO: Benchmarking LLM Agents for Black-Box Optimization* (Ming Chen et al., 2026).
+# AgenticBBO-Bench
+
+**Benchmarking LLM agents for black-box optimization**
+
+77 tasks · 5 domains · A unified finite-budget evaluation protocol
+
+[![Paper](https://img.shields.io/badge/arXiv-2610.12183-b31b1b.svg)](https://arxiv.org/abs/2610.12183)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB.svg)](pyproject.toml)
+[![License](https://img.shields.io/badge/License-MIT-2ea44f.svg)](LICENSE)
+
+**[Paper](https://arxiv.org/abs/2610.12183) · [Quick start](#quick-start) · [Benchmark](#benchmark-at-a-glance) · [Findings](#findings-from-the-paper) · [Citation](#citation-and-license)**
+
+</div>
+
+<p align="center">
+  <img src="docs/assets/frontier-model-comparison.png" width="1000" alt="Seven frontier models on the five-task challenge: model scores on the left and score versus official token cost per task on the right. GPT-6 Astra and DeepSeek V4.1 Flash form the reported Pareto frontier.">
+</p>
+
+<p align="center">
+  <em>Paper Figure 1. Similar optimization quality can come at very different inference costs.<br>Scores are shown on a 0–100 scale; costs use the paper's official list-price token accounting.</em>
+</p>
+
+AgenticBBO-Bench is a Python benchmark for black-box optimization with language-model agents and numerical optimizers. It accompanies [*A Closer Look at Agentic BBO: Benchmarking LLM Agents for Black-Box Optimization*](https://arxiv.org/abs/2610.12183) (Ming Chen et al., 2026).
+
+## What is Agentic BBO?
+
+An LLM agent can combine task semantics, search history, code execution, and optimization tools to decide what to evaluate next. The benchmark compares these agents with numerical optimizers using shared initial evaluations, a host-controlled evaluation budget, isolated agent workspaces, append-only run logs, and a common scoring implementation.
+
+<p align="center">
+  <img src="docs/assets/agentic-bbo-overview.png" width="1000" alt="Traditional Bayesian optimization follows a fixed surrogate-model and acquisition loop. Agentic BBO lets an LLM agent analyze, plan, and use tools before proposing a candidate for expensive evaluation.">
+</p>
+
+<p align="center">
+  <em>Paper Figure 2. The agent organizes the intermediate search process before each expensive evaluation.<br>The illustrated actions are examples: the agent can choose, skip, repeat, or combine them.</em>
+</p>
+
+## Benchmark at a glance
 
 | Domain | Tasks | Shared initial evaluations | New evaluations per main run |
 | --- | ---: | ---: | ---: |
@@ -73,6 +109,23 @@ docker compose --profile dbtune up --build -d dbtune
 
 Placement can also run directly with `uv run python -m bbo.tasks.bboplace.local_service --port 8070`. BBOPlace uses the frozen `geometry_repair_worst_initial_v1` repair policy and weighted pin HPWL; the bundled geometry and netlist data never enter the agent container. DBTune requires separately downloaded surrogate checkpoints and a dedicated Python 3.7 / scikit-learn 0.21.3 service. Follow [`bbo/tasks/dbtune/assets/README.md`](bbo/tasks/dbtune/assets/README.md) before starting it. Use `AGENTBBO_HTTP_SURROGATE_BASE_URL` or `--dbtune-url` for a nondefault DBTune endpoint.
 
+## Findings from the paper
+
+- **Cross-domain performance.** In the reported experiments, Agentic BBO achieves higher family-averaged scores than direct LLM-based methods in all five domains and exceeds the best tested numerical optimizer in four.
+- **Agent design matters.** Additional numerical tools do not consistently improve performance. Task semantics are broadly useful, while more specific domain priors are less reliable.
+- **Search experience can transfer.** Numerical optimizers can build on trajectories established by the agent, motivating agent-to-optimizer handoff studies.
+- **Quality and cost both matter.** On the five-task frontier challenge, GPT-6 Astra and DeepSeek V4.1 Flash lie on the performance–cost Pareto frontier among the seven evaluated models under the common Codex harness.
+
+<p align="center">
+  <img src="docs/assets/task-information.png" width="780" alt="Task information study on six real-world tasks comparing anonymous inputs, task semantics, and full domain priors. Task semantics improve scores over anonymous inputs; additional priors have mixed effects.">
+</p>
+
+<p align="center">
+  <em>Paper Figure 4(a). Task semantics help across the six studied tasks; adding more specific priors has mixed effects.</em>
+</p>
+
+See the [paper](https://arxiv.org/abs/2610.12183) for the full results and study settings, and [`docs/ablations.md`](docs/ablations.md) for the diagnostic contracts exposed by this release.
+
 ## Diagnostic experiments
 
 The diagnostic suite fixes smaller budgets and task selections for agent interface and information studies:
@@ -118,4 +171,18 @@ For development setup and contribution rules, see [`CONTRIBUTING.md`](CONTRIBUTI
 
 ## Citation and license
 
-If you use the benchmark, cite *A Closer Look at Agentic BBO: Benchmarking LLM Agents for Black-Box Optimization* (Ming Chen et al., 2026). The project source is MIT-licensed; see [`LICENSE`](LICENSE). Bundled adaptations and benchmark assets are described in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+If you use the benchmark, please cite:
+
+```bibtex
+@misc{chen2026closer,
+  title         = {A Closer Look at Agentic BBO: Benchmarking LLM Agents for Black-Box Optimization},
+  author        = {Ming Chen and Rong-Xi Tan and Ke Xue and Yu-Jie Zhou and Taiye Lu and Zhi-Xuan Gao and Peng Xie and Zijun Shen and Chen Lu and Haopu Shang and Chao Qian},
+  year          = {2026},
+  eprint        = {2610.12183},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG},
+  url           = {https://arxiv.org/abs/2610.12183}
+}
+```
+
+The project source is MIT-licensed; see [`LICENSE`](LICENSE). Bundled adaptations and benchmark assets are described in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). The figures above are from the accompanying paper; source and export details are in [`docs/assets/README.md`](docs/assets/README.md).
